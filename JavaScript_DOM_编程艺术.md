@@ -106,6 +106,7 @@ getElementById、getElementsByTagName、getAttribute、setAttribute 这些方法
 
 ### 7.2 DOM 方法
 在 DOM 树中创建一个元素节点要分两步：
+
 - 创建一个新的元素
 - 将这个元素插入节点树
 
@@ -128,6 +129,7 @@ var insertAfter = function (newElement, targetElement) {
 ### 7.4 Ajax
 #### 7.4.1 XMLHttpRequest 对象
 兼容性代码：
+
 ``` javascript
 var getHTTPObject = function () {
   if (typeof XMLHttpRequest == "undefined") {
@@ -184,6 +186,7 @@ var lastChildElement = function (elementList) {
 
 ### 8.6 显示“快捷键清单”
 一些基本的快捷键都有约定俗成的设置方法，对此感兴趣的读者可以浏览 [http://www.clagunt.com/blog/193/] 。
+
 * accesskey="1" 对应一个“返回到本网站主页”的链接
 * accesskey="2" 对应一个“后退到前一页面”的链接
 * accesskey="4" 对应一个“打开本网站的搜索表单/页面”的链接
@@ -234,6 +237,7 @@ var removeClass = function (element, className) {
 ### 11.3 几个示例
 #### 11.3.3 表单
 HTML5 新加入的输入控件类型：
+
 * email
 * url
 * date
@@ -253,6 +257,7 @@ HTML5 新加入的输入控件类型：
 * required 必填
 
 ### 11.4 HTML5 还有其他特性吗
+
 * [使用 WebSocket 与服务器端脚本进行开放的双向通信](http://dev.w3.org/html5/websockets/)
 * [标准化的拖放实现](http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#dnd)
 * [使用 Web Worker 在后台执行 JavaScript](http://www.whatwg.org/specs/web-workers/current-work/)
@@ -266,6 +271,7 @@ HTML5 新加入的输入控件类型：
 ## 第十二章 综合示例 P220
 ### 12.3 CSS
 这一节的内容里有提到将样式表导入到一个基本的样式表中：
+
 ``` CSS
 @import url(layout.css)
 @import url(color.css)
