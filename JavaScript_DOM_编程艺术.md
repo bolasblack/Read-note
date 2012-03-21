@@ -185,7 +185,7 @@ var lastChildElement = function (elementList) {
 ```
 
 ### 8.6 显示“快捷键清单”
-一些基本的快捷键都有约定俗成的设置方法，对此感兴趣的读者可以浏览 [](http://www.clagunt.com/blog/193/) 。
+一些基本的快捷键都有约定俗成的设置方法，对此感兴趣的读者可以浏览 http://www.clagunt.com/blog/193/ 。
 
 * accesskey="1" 对应一个“返回到本网站主页”的链接
 * accesskey="2" 对应一个“后退到前一页面”的链接
