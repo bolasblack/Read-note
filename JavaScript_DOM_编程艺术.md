@@ -1,5 +1,3 @@
-TODO: 完成 223 行的 removeClass 函数
-
 # JavaScript DOM 编程艺术 （第二版） 笔记
 ## 第三章 DOM P32
 D: Document, O: Object, M: Model
@@ -53,6 +51,7 @@ setAttribute 和 getAttribute 是 “第一级 DOM” 的组成部分
 * 浏览器嗅探：不提倡的原因是由于浏览器和浏览器版本的增多，会使得浏览器嗅探的代码变得越来越臃肿，而且一旦浏览器发生改变，代码也有可能会需要随之发生改变
 
 对象检测代码：
+
 ``` javascript
   if (method) {
     // code...
@@ -124,7 +123,7 @@ var insertAfter = function (newElement, targetElement) {
     parent.appendChild(newElement);
   else
     parent.insertBefore(newElement, targetElement.nextSibling);
-}
+};
 ```
 
 ### 7.4 Ajax
@@ -145,7 +144,7 @@ var getHTTPObject = function () {
     }
   }
   return new XMLHttpRequest();
-}
+};
 ```
 
 #### 7.4.3 Hijax
@@ -182,7 +181,7 @@ lastChildElement 函数
 var lastChildElement = function (elementList) {
   var allElement = elementList.getElementsByTagName("*");
   return allElement[allElement.length - 1];
-}
+};
 ```
 
 ### 8.6 显示“快捷键清单”
@@ -226,9 +225,10 @@ var addClass = function (element, newClass) {
 };
 //顺带附上自己写的 removeClass
 var removeClass = function (element, className) {
-  var newClassName = element.getAttribute("class").replace(/\s*className/g, "");
+  var tempRe = new RegExp('\\s*' + className, 'g');
+  var newClassName = element.getAttribute("class").replace(tempRe, "");
   element.setAttribute("class", newClassName);
-}
+};
 ```
 
 ## 第十章 用 JavaScript 实现动画效果 P172
