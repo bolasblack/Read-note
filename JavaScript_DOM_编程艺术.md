@@ -185,7 +185,7 @@ var lastChildElement = function (elementList) {
 ```
 
 ### 8.6 显示“快捷键清单”
-一些基本的快捷键都有约定俗成的设置方法，对此感兴趣的读者可以浏览 [http://www.clagunt.com/blog/193/] 。
+一些基本的快捷键都有约定俗成的设置方法，对此感兴趣的读者可以浏览 [](http://www.clagunt.com/blog/193/) 。
 
 * accesskey="1" 对应一个“返回到本网站主页”的链接
 * accesskey="2" 对应一个“后退到前一页面”的链接
@@ -225,7 +225,7 @@ var addClass = function (element, newClass) {
 };
 //顺带附上自己写的 removeClass
 var removeClass = function (element, className) {
-  var tempRe = new RegExp('\\s*' + className, 'g');
+  var tempRe = new RegExp('\\s*' + className + '\\s*', 'g');
   var newClassName = element.getAttribute("class").replace(tempRe, "");
   element.setAttribute("class", newClassName);
 };
@@ -249,6 +249,7 @@ HTML5 新加入的输入控件类型：
 * color
 
 输入控件的新属性：
+
 * autocomplete 为 text 添加一组建议的输入项
 * autofocus 让表单元素自动获取焦点
 * form 用于对 `<form>` 标签外部的标点元素进行分组
