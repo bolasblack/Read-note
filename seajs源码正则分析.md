@@ -1,4 +1,4 @@
-# SeaJS 源代码中的正则表达式介绍
+# SeaJS 源代码中的正则表达式分析
 
 由于 JavaScript 无法在正则表达式中添加注释，故而代码是用 CoffeeScript 写的
 
@@ -16,6 +16,7 @@
 str.indexOf(params) === -1 相对于 ~str.indexOf(params) 有任何优势吗？
 
 这段不理解
+
 ``` JavaScript
       // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
       // the end of the insertBefore execution, so use `currentlyAddingScript`
@@ -29,6 +30,7 @@ str.indexOf(params) === -1 相对于 ~str.indexOf(params) 有任何优势吗？
 还有就是为什么要 insertBefore ？
 
 这段不理解
+
 ``` JavaScript
     var scripts = head.getElementsByTagName('script');
     for (var i = 0; i < scripts.length; i++) {
