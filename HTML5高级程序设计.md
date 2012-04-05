@@ -125,10 +125,10 @@ var hasVideo = !!(document.createElement('video').canPlayType);
 
 容器和编解码器都可以在 type 属性声明，如果 type 属性中指定的类型与源文件不匹配，浏览器可能就会拒绝播放。。所有的支持列表见 RFC4218,RFC4218 是由 IETF(Internet Engineering Task Force, Internet 工程任务分组)维护的一套文档。以下列出常见组合：
 
-* 在 Ogg 容器中的 Theora 视频和 Vorbis 音频： type='video/ogg; codecs="theora, voribis"'
-* 在 Ogg 容器中的 Vorbis 音频：type='video/ogg; codecs="voribis"'
-* 在 MP4 容器中的 sinple bashline H.264 视频和 lowcomplexity AAC 音频： type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
-* 在 MP4 容器中的 MPEG-4 简单视频和简单 AAC 音频：type='video/mp4; codecs="mp4v.20.8, mp4a.40.2"'
+* 在 Ogg 容器中的 Theora 视频和 Vorbis 音频： `type='video/ogg; codecs="theora, voribis"‘`
+* 在 Ogg 容器中的 Vorbis 音频：`type='video/ogg; codecs="voribis"'`
+* 在 MP4 容器中的 sinple bashline H.264 视频和 lowcomplexity AAC 音频： `type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'`
+* 在 MP4 容器中的 MPEG-4 简单视频和简单 AAC 音频：`type='video/mp4; codecs="mp4v.20.8, mp4a.40.2"'`
 
 #### 3.2.4 使用 Video 元素
 video 元素相对 audio 的额外属性：
@@ -138,7 +138,7 @@ video 元素相对 audio 的额外属性：
 * videoWidth、videoHeight: 返回视频的固有或者自适应的宽度和高度，只读
 * video 还有一个 audio 元素不支持的关键特性：可被 Canvas 的函数调用
 
-** P63 起演示了一个创建视频市局查看器的过程 **
+**P63 起演示了一个创建视频市局查看器的过程**
 
 ## 第四章 Geolocation API
 ### 4.1 位置信息
