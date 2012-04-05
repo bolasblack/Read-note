@@ -254,3 +254,72 @@ HTML5 Geolocation 规范提供了一套保护用户隐私的机制。除非得�
 * 用户怎样检查和更新他们的位置数据
 
 ### 4.4 使用 HTML5 Geolocation API
+#### 4.4.1 浏览器支持性检测
+如果存在地理定位对象，`navigator.geolocation` 调用将返回该对象，否则将触发返回一个空值。
+
+#### 4.4.2 位置请求
+目前，有两种类型的位置要求：
+
+* 单次定位请求：getCurrentPosition (successCallback, errorCallback, positionOptions)
+* 重复性的位置更新请求：watchPosition (successCallback, errorCallback, positionOptions)
+
+successCallback 接受一个参数：位置对象。这个对象包含坐标（coords 属性）和一个获取位置数据时的时间戳。
+
+坐标总是有多个属性，但是浏览器和用户的硬件设备会决定这些属性值是否有意义。latitude（纬度）、longitude（经度）、accuracy（准确度）是它的前三个属性。
+
+坐标还有一些其他的属性，不能保证浏览器都为其提供支持，但如果不支持就会返回 null 。
+
+* altitude: 用户位置的海拔高度，以 m 为单位
+* altitudeAccuracy：海拔高度的准确度，也是以 m 为单位
+* heading：行进方向，相对于正北而言
+* speed：地面速度，以 "m/s" 为单位
+
+errorCallback 接受错误对象作为参数，错误编号设置在错误对象的 code 属性中（原文中全部为大写，我这里为了看起来舒服，全都记作小写）：
+
+* unknown_error：错误编号0,不包括在其他错误编号中的错误。需要通过 message 属性查找错误的更多详细信息。
+* permission_denied：错误编号1,用户拒绝浏览器获得其位置信息
+* position_unavailable：错误编号2,尝试获取用户位置，但失败了
+* timeout：错误编号3,设置了可选的 timeout 值。尝试确定用户位置的过程超时
+
+如果要同时处理正常情况和错误情况，就应该把注意力集中到三个可选参数 enableHighAccuracy, timeout, maximumAge 上，将这三个可选参数传递给 HTML5 Geolocation 服务以调整数据收集方式。**这三个参数可以使用 JSON 对象传递**，这样更便于添加到 HTML5 Geolocation 请求调用中。
+
+* enableHighAccuracy：启用这个参数则通知浏览器启用 HTML5 Geolocation 服务的高精确度模式。默认值为 false 。由于地理定位数据的种种限制（见4.1），启用这个参数可能没有任何差别，可能会导致极其花费更多的时间和资源来确定位置，所以应谨慎使用。
+* timeout：可选值，单位为 ms，告诉浏览器计算所允许的最长时间，如果还没有完成计算，就调用错误处理函数，默认值为 Infinity
+* maximumAge：表示浏览器重新计算位置的时间间隔。单位为 ms，默认值为零，这意味着浏览器每次请求时都必须立即重新计算位置
+
+**请注意**API不允许我们为浏览器指定多长时间重新计算一次位置信息。这是完全由浏览器的实现所决定的。我们能做的就是告诉浏览器 maximumAge 的值是什么。
+
+如果应用程序不再需要接受 watchPosition 的持续位置更新，则只需调用 clearWatch() 函数，如下所示（watchId 是 watchPosition 函数的返回值）：
+
+```JavaScript
+navigator.geolocation.clearWatch(watchId);
+```
+
+### 4.5 使用 HTML5 Geolocation 构建实时应用
+距离计算使用众所周知的 Haversine 公式来实现（公式不好输出，请自行 Google；关于这个公式的原理，请查阅中学数学教材）。
+
+这个公式能够更具经纬度来计算地球上两点间的距离。以下就是该公式的 JavaScript 实现：
+
+```JavaScript
+var toRadians = function(degree) {return degree * Math.PI / 180;};
+var distance = function(latitude1, longitude1, latitude2, longitude2) {
+  // R 是地球的半径，以 km 为单位
+  var R = 6371;
+  
+  var deltaLatitude = toRadians(latitude2 - latitude1);
+  var deltaLongitude = toRadians(longitude2 - longitude1);
+  latitude1 = toRadians(latitude1);
+  latitude2 = toRadians(latitude2);
+  
+  var a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) + 
+          Math.cos(latitude1) * Math.cos(latitude2) * 
+          Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d;
+};
+```
+
+> 作为开发人员，无法选择浏览器计算位置所使用的方法，但可以保持数据的准确度，所以推荐使用 accuracy 属性 —— Brian
+
+## 第五章
