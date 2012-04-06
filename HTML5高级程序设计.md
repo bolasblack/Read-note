@@ -529,6 +529,9 @@ WebSocket接口的使用很简单。要连接远程主机，只需要新建一�
     myWebSocket.onclose = function(evt){
       alert("Connection closed");
     };
+    
+### 6.3 编写简单的 Echo WebSocket 服务器
+**自 P120 页起至 P126 ，书中详细介绍了如何利用 Python 编写一个简单的 Echo 服务器**
 
 ### 6.4 使用 HTML5 WebSocket API
 #### 浏览器支持情况检测
