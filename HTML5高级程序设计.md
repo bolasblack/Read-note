@@ -492,3 +492,50 @@ window.addEventListener("message", function(e) {
 ```
 
 ## 第六章 WebSockets API
+### 6.1 HTML5 WebSockets 概述
+#### WebSocket 接口
+
+    [Constructor(in DOMSting url,in optional DOMString protocol)]
+    interface WebSocket{
+        readonly attribute DOMString URL;
+        
+        //就绪状态
+        const unsigned short CONNECTING=0;
+        const unsigned short OPEN=1;
+        const unsigned short CLOSED=2;
+        readonly attribute unsigned short readyState;
+        readonly attribute unsigned long bufferedAmount;
+        
+        //网络
+        attribute Function onopen;
+        attribute Function onmessage;
+        attribute Function onclose;
+        boolean send(in DOMString data);
+        void close();
+    };
+    WebSocket implements EventTarget;
+
+WebSocket接口的使用很简单。要连接远程主机，只需要新建一个 WebSocket 实例，提供希望连接的对端URL。注意， ws:// 和 wss:// 前缀分别表示 WebSocket 连接和安全的 WebSocket 连接。
+
+基于同一底层的 TCP/IP 连接，在客户端和服务器之间的初始握手阶段，将 HTTP 协议升级至 WebSocket 协议， WebSocket 连接就建立完成了。连接一旦建立，WebSocket 数据帧就可以以全双工模式在客户端和服务器之间进行双向传送。连接本身是通过 WebSocket 接口定义的 message 事件和 send 函数来运作的。在代码中，采用异步事件侦听器来控制连接生命周期的每一个阶段。
+
+    myWebSocket.onopen = function(evt){
+      alert("Connection open…");
+    };
+    myWebSocket.onmessage = function(evt){
+      alert("Received Message:" + evt.data);
+      myWebSocket.send("somethings...");
+    };
+    myWebSocket.onclose = function(evt){
+      alert("Connection closed");
+    };
+
+### 6.4 使用 HTML5 WebSocket API
+#### 浏览器支持情况检测
+
+```JavaScript
+if (window.WebSocket == null) {
+  // 浏览器不支持...
+}
+```
+## 第七章 Forms API
