@@ -367,10 +367,10 @@ HTML5 通过引入源(origin)的概念对域安全进行了阐明与改进。源
 
 源由规则（scheme）、主机（host）、端口（port）组成：
 
-> http://www.example.com:9000/path/
-> -+--   -------+------- --+- --+--
->  |            |          |    |
-> scheme       host      port 不考虑路径
+> http://www.example.com:9000/path/  
+> -+--   -------+------- --+- --+--  
+>  |            |          |    |  
+> scheme       host      port 不考虑路径  
 
 HTML5 定义了源的序列化。源在 API 和协议中以字符串的形式出现。这对于使用 XHR 进行跨源 HTTP 请求是非常重要的，对于 WebSocket 也一样。
 
