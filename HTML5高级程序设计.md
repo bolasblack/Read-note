@@ -8,14 +8,13 @@ HTML5 是基于各种各样的理念（在 WHATWG 规范中有描述）进行设
 * 互通性
 * 通用访问性
 
-#### 1.4.1 兼容性和存在即合理
-#### 1.4.2 效率和用户优先
+#### 兼容性和存在即合理
+#### 效率和用户优先
 HTML5引入了一种新的*基于来源*的安全模型。这个安全模型可以让我们做一些以前做不到的事情，不需要借助任何所谓聪明、有创意却不安全的hack就能跨域进行安全对话。
 
 PS. [利用HTML5的window.postMessage实现跨域通信](http://www.36ria.com/3890) 与 [HTML5：使用postMessage实现Ajax跨域请求](http://yangzebo.com/blog/?p=208) 就提到了这种方式。
 
-
-#### 1.4.3 化繁为简
+#### 化繁为简
 
 * 以浏览器原生能力替代复杂的 JavaScript 代码
 * 新的简化的 DOCTYPE
@@ -24,11 +23,11 @@ PS. [利用HTML5的window.postMessage实现跨域通信](http://www.36ria.com/38
 
 基于多种改进过的、强大的错误处理方案，HTML5 具备了良好的错误处理机制。非常有现实意义的一点是，HTML5 提倡重大错误的平缓恢复，...
 
-比如，如果页面中有错误的话，在以前可能会影响整个页面显示，而HTML5不会出现这种情况，取而代之的是以标准方式显示*“broken标记”*，这要归功于HTML5中精确定义的*错误恢复机制*
+比如，如果页面中有错误的话，在以前可能会影响整个页面显示，而HTML5不会出现这种情况，取而代之的是以标准方式显示“*broken标记*”，这要归功于HTML5中精确定义的*错误恢复机制*
 
 PS. 很可惜，我找不到有关 broken标记 的相关资料。
 
-#### 1.4.4 通用访问
+#### 通用访问
 这个原则可以分成三个概念：
 
 * 可访问性：出于对残障用户的考虑，HTML5 与 WAI（Web Accessibility Initiative，Web 可访问性倡议） 和 ARIA （Accessible Rich Internet Applications，可访问富 Internet 应用）做到了紧密结合，WAI-ARIA 中以屏幕阅读器为基础的元素已经被添加到 HTML 中。
@@ -56,7 +55,7 @@ www.caniuse.com 网站按照浏览器版本提供了详尽的 HTML5 功能支持
 同时也可以使用 Modernizer —— 一个检测浏览器对 HTML5 和 CSS3 的支持程度的 JavaScript 库。
 
 ### 1.6 HTML5 的新功能
-#### 1.6.2 新元素与旧元素
+#### HTML5 标记元素的 7 个分类
 HTML5 引入了很多新的标记元素，根据内容的不同，这些元素分成了 7 大块：
 
 * 内嵌：向文档添加其他类型的内容，例如 audio, video, canvas, iframe 等
@@ -69,7 +68,7 @@ HTML5 引入了很多新的标记元素，根据内容的不同，这些元素�
 
 上述所有类型的元素都可以通过 CSS 来设定样式。
 
-#### 1.6.3 语义化标记
+#### 新增的标签的语义
 我们说过，HTML5 的宗旨之一就是存在即合理。Google 分析了上百万的页面，从中发现了 DIV 标签和通用 ID 名称重复量很大。例如很多开发人员喜欢使用 footer 和 header 作为标签的 ID ，所以 HTML5 引入了一组新的片段类元素，在目前驻留的浏览器中已经可以使用了。
 
 * header：标记头部区域的内容（用于整个页面或页面中的一块区域）
@@ -79,7 +78,7 @@ HTML5 引入了很多新的标记元素，根据内容的不同，这些元素�
 * aside：相关内容或者引文
 * nav：导航类辅助内容
 
-#### 1.6.4 使用 Selectors API 简化选取操作
+#### Selectors API
 
 * querySelector()：根据指定的选择规则，返回在页面中找到的第一个匹配元素
 * querySelectorAll()：根据指定规则返回页面中所有相匹配的元素
@@ -91,7 +90,7 @@ Selectors API 与现在 CSS 中使用的选择规则一样，同时可以为 Sel
 var x = document.querySelector(".highClass", ".lowClass");
 ```
 
-#### 1.6.7 DOM Level 3
+#### DOM Level 3
 IE9 将会支持 DOM Level 2 和 DOM Level 3的特性，包括非常重要的 addEventListener() 和 dispatchEvent()
 
 ## 第二章 Canvas API
@@ -99,7 +98,7 @@ PS. 这一部分我不打算看，我打算直接看 Canvas 的书籍
 
 ## 第三章 音频和视频
 ### 3.1 HTML5 Audio 和 Video 概述
-#### 3.1.3 HTML5 Audio 和 Video 的限制
+#### Audio 和 Video 的限制
 
 * 流式音频和视频。因为目前 HTML5 视频规范中还没有比特率切换标准，所以对视频的支持只限于加载全部媒体文件，但是将来一旦流媒体格式被 HTML5 支持，则肯定会有相关的设计规范。
 * HTML5 的媒体受到 HTML 跨源 (cross-origin) 资源共享的限制。关于跨资源共享的更多信息，请参考第五章。
@@ -107,12 +106,13 @@ PS. 这一部分我不打算看，我打算直接看 Canvas 的书籍
 * 对 Audio 元素和 Video 元素的访问尚未完全加入规范中。基于流行的字幕格式 SRT 的字幕支持规范 (WebSRT) 仍在编写中。
 
 ### 3.2 使用 HTML5 Audio 和 Video API
-#### 3.2.1 浏览器支持性检测
+#### 浏览器支持性检测
+
 ``` javascript
 var hasVideo = !!(document.createElement('video').canPlayType);
 ```
 
-#### 3.2.2 理解媒体元素
+#### source 标签和 source 标签的 type 属性
 最后，介绍最重要的属性：src。最简单的情况下，src 属性直接指向媒体文件就可以了。但是，万一浏览器不支持相关容器或者编解码器呢（比如 Ogg 和 Vorbis）？这就需要用到备用声明了。备用声明中可以包含多种来源，浏览器可以从这么多来源中进行选择：
 
 ``` html
@@ -130,8 +130,7 @@ var hasVideo = !!(document.createElement('video').canPlayType);
 * 在 MP4 容器中的 sinple bashline H.264 视频和 lowcomplexity AAC 音频： `type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'`
 * 在 MP4 容器中的 MPEG-4 简单视频和简单 AAC 音频：`type='video/mp4; codecs="mp4v.20.8, mp4a.40.2"'`
 
-#### 3.2.4 使用 Video 元素
-video 元素相对 audio 的额外属性：
+#### video 元素相对 audio 的额外属性：
 
 * poster: 在视频加载完成之前，代表视频内容的图片的 URL 地址，可读可修改
 * width、height: 读取或者设置显示尺寸。如果设置的宽度与视频本身大小不匹配，可能导致居中显示，上下或者左右可能出现黑色条状区域
@@ -142,7 +141,6 @@ video 元素相对 audio 的额外属性：
 
 ## 第四章 Geolocation API
 ### 4.1 位置信息
-#### 4.1.1 纬度和经度坐标
 位置信息主要由一对纬度和经度坐标组成，经纬度坐标可以用两种方式表示：
 
 * 十进制格式（例如，39.172 22）
@@ -150,8 +148,7 @@ video 元素相对 audio 的额外属性：
 
 除了经纬度坐标，HTML5 Geolocation 还提供位置坐标的*准确度*。除此之外，它还可能会提供一些其他的元数据，具体情况取决于浏览器所在的硬件设备，这些元数据包括海拔、海拔准确度、行驶方向和速度等。如果这些与元数据不存在则返回 null 。
 
-
-#### 4.1.2 位置信息从何而来
+#### 位置信息的数据源
 Geolocation API 不指定设备使用哪种底层技术来定位应用程序的用户。它只是用于检索位置信息的 API，而且通过该 API 检索到的数据只具有某种程度的准确性。它不能保证设备返回的实际位置是精确的。
 
 设备可以使用下列数据源：
@@ -163,7 +160,8 @@ Geolocation API 不指定设备使用哪种底层技术来定位应用程序的�
  - GSM 或 CDMA 手机的 ID
 * 用户自定义数据
 
-#### 4.1.3 IP 地址地理定位数据
+#### 各个数据源的优缺点
+##### IP 地址地理定位数据
 优点
 
 * 任何地方都可以用
@@ -174,7 +172,7 @@ Geolocation API 不指定设备使用哪种底层技术来定位应用程序的�
 * 不精确（一般精确到市级）
 * 运算代价大
 
-#### 4.1.4 GPS 地理定位数据
+##### GPS 地理定位数据
 优点
 
 * 很精确
@@ -185,7 +183,7 @@ Geolocation API 不指定设备使用哪种底层技术来定位应用程序的�
 * 室内效果不好
 * 需要额外的硬件设备
 
-#### 4.1.5 Wi-Fi 地理定位数据
+##### Wi-Fi 地理定位数据
 优点
 
 * 精确
@@ -196,7 +194,7 @@ Geolocation API 不指定设备使用哪种底层技术来定位应用程序的�
 
 * 在乡村这些无线接入点较少的地区效果不好
 
-#### 4.1.6 手机地理定位数据
+##### 手机地理定位数据
 优点
 
 * 相当精确
@@ -208,7 +206,7 @@ Geolocation API 不指定设备使用哪种底层技术来定位应用程序的�
 * 需要能够访问手机或者其 modem 的设备
 * 在基站较少的偏远地区效果不好
 
-#### 4.1.7 用户自定义地理定位数据
+##### 用户自定义地理定位数据
 优点
 
 * 用户可以获得比程序定位服务更准确的位置数据
@@ -238,10 +236,10 @@ HTML5 Geolocation 规范提供了一套保护用户隐私的机制。除非得�
 * 浏览器从其宿主设备中检索坐标信息。例如：IP 地址、Wi-Fi 或 GPS 坐标。这是浏览器内部功能。
 * 浏览器将坐标发送给受信任的外部定位服务，它返回一个详细的位置信息，并将该位置信息发回给 HTML5 Geolocation 应用程序。
 
-#### 4.3.1 触发隐私保护机制
+#### 隐私保护机制
 如果仅仅是添加 HTML5 Geolocation 代码，而不被任何方法调用，则不会触发隐私保护机制。只要所添加的 HTML5 Geolocation 代码被执行，浏览器就会提示用户应用程序要共享他们的位置。
 
-#### 4.3.2 处理位置信息
+#### 如何处理位置信息
 因为位置数据属于敏感信息，所以接收到之后，必须小心地处理、存储和重传。如果用户没有授权存储这些数据，那么应用程序应该在完成相应任务完成后立即删除它。
 
 如果要重传位置数据，建议先对其进行加密。在手机地理定位数据时，应用程序应该着重提示用户以下内容：
@@ -254,15 +252,16 @@ HTML5 Geolocation 规范提供了一套保护用户隐私的机制。除非得�
 * 用户怎样检查和更新他们的位置数据
 
 ### 4.4 使用 HTML5 Geolocation API
-#### 4.4.1 浏览器支持性检测
+#### 浏览器支持性检测
 如果存在地理定位对象，`navigator.geolocation` 调用将返回该对象，否则将触发返回一个空值。
 
-#### 4.4.2 位置请求
+#### 位置请求 API
 目前，有两种类型的位置要求：
 
 * 单次定位请求：getCurrentPosition (successCallback, errorCallback, positionOptions)
 * 重复性的位置更新请求：watchPosition (successCallback, errorCallback, positionOptions)
 
+##### successCallback
 successCallback 接受一个参数：位置对象。这个对象包含坐标（coords 属性）和一个获取位置数据时的时间戳。
 
 坐标总是有多个属性，但是浏览器和用户的硬件设备会决定这些属性值是否有意义。latitude（纬度）、longitude（经度）、accuracy（准确度）是它的前三个属性。
@@ -274,6 +273,7 @@ successCallback 接受一个参数：位置对象。这个对象包含坐标（c
 * heading：行进方向，相对于正北而言
 * speed：地面速度，以 "m/s" 为单位
 
+##### errorCallback
 errorCallback 接受错误对象作为参数，错误编号设置在错误对象的 code 属性中（原文中全部为大写，我这里为了看起来舒服，全都记作小写）：
 
 * unknown_error：错误编号0,不包括在其他错误编号中的错误。需要通过 message 属性查找错误的更多详细信息。
@@ -281,6 +281,7 @@ errorCallback 接受错误对象作为参数，错误编号设置在错误对象
 * position_unavailable：错误编号2,尝试获取用户位置，但失败了
 * timeout：错误编号3,设置了可选的 timeout 值。尝试确定用户位置的过程超时
 
+##### 另外的设置参数
 如果要同时处理正常情况和错误情况，就应该把注意力集中到三个可选参数 enableHighAccuracy, timeout, maximumAge 上，将这三个可选参数传递给 HTML5 Geolocation 服务以调整数据收集方式。**这三个参数可以使用 JSON 对象传递**，这样更便于添加到 HTML5 Geolocation 请求调用中。
 
 * enableHighAccuracy：启用这个参数则通知浏览器启用 HTML5 Geolocation 服务的高精确度模式。默认值为 false 。由于地理定位数据的种种限制（见4.1），启用这个参数可能没有任何差别，可能会导致极其花费更多的时间和资源来确定位置，所以应谨慎使用。
@@ -289,6 +290,7 @@ errorCallback 接受错误对象作为参数，错误编号设置在错误对象
 
 **请注意**API不允许我们为浏览器指定多长时间重新计算一次位置信息。这是完全由浏览器的实现所决定的。我们能做的就是告诉浏览器 maximumAge 的值是什么。
 
+##### clearWatch
 如果应用程序不再需要接受 watchPosition 的持续位置更新，则只需调用 clearWatch() 函数，如下所示（watchId 是 watchPosition 函数的返回值）：
 
 ```JavaScript
@@ -296,6 +298,7 @@ navigator.geolocation.clearWatch(watchId);
 ```
 
 ### 4.5 使用 HTML5 Geolocation 构建实时应用
+#### 计算地球上两点距离的 Haversine 公式
 距离计算使用众所周知的 Haversine 公式来实现（公式不好输出，请自行 Google；关于这个公式的原理，请查阅中学数学教材）。
 
 这个公式能够更具经纬度来计算地球上两点间的距离。以下就是该公式的 JavaScript 实现：
@@ -322,4 +325,170 @@ var distance = function(latitude1, longitude1, latitude2, longitude2) {
 
 > 作为开发人员，无法选择浏览器计算位置所使用的方法，但可以保持数据的准确度，所以推荐使用 accuracy 属性 —— Brian
 
-## 第五章
+## 第五章 Communication API
+主要是要讲述 postMessage 和 XMLHttpRequest Level2
+
+### 5.1 跨文档消息通信
+出于安全方面的考虑，运行在同一浏览器中的框架、标签页、窗口间的通信一直受到严格限制。然而，现实中存在一些合理的让不同站点的内容能在浏览器内进行交互的需求。Mashup 就是最典型的一个例子。
+
+为了满足上述需求，浏览器厂商和标准制定机构一致同意引入一种新功能：跨文档消息通信。跨文档消息通信可以确保 iframe、标签页、窗口间安全的进行跨源通信。
+
+#### postMessage API
+利用 postMessage 发送消息非常简单：
+
+```JavaScript
+chatFrame.contentWindow.postMessage("hello world", "http://www.example.com/");
+```
+
+接收消息：
+
+```JavaScript
+window.addEventListener("message", function(e) {
+  switch(e.origin) {
+    case "frend.example.com":
+      processMessage(e.data);
+      break;
+    default:
+      // ...
+  }
+}，true);
+```
+
+data 是发送方传递的实际消息，origin 属性是发送来源，用于忽略来自不可信源的消息。
+
+PS.可以看看我在第一章 1.4 节提到的两篇文章。
+
+鉴于 postMessage API 的一致性和易用性，以及其提供的 JavaScript 环境中的异步通信机制，在同源文档间通信时也推荐使用
+
+在 JavsScript 环境的通信中始终应使用 postMessage API，例如使用 Web Workers 通信时。
+
+#### 5.1.1 理解源安全
+HTML5 通过引入源(origin)的概念对域安全进行了阐明与改进。源是网络上用来建立信任关系的地址的子集。
+
+源由规则（scheme）、主机（host）、端口（port）组成：
+
+> http://www.example.com:9000/path/
+> -+--   -------+------- --+- --+--
+>  |            |          |    |
+> scheme       host      port 不考虑路径
+
+HTML5 定义了源的序列化。源在 API 和协议中以字符串的形式出现。这对于使用 XHR 进行跨源 HTTP 请求是非常重要的，对于 WebSocket 也一样。
+
+postMessage 的安全规则确保了消息不会传递到非预期的的源页面中。发送消息时由发送方指定接收方的源。如果发送方用来调用 postMessage 的窗口不具有特定的源（例如用户跳转到了其他站点），浏览器就不会传送消息。
+
+接收信息的时候，发送方的源也作为消息的一部分，为避免伪造，消息源由浏览器提供。接收方可以决定处理与忽略哪些消息。
+
+处理跨源通信的信息时，一定要验证每个消息的源，处理消息中的数据也应该谨慎，最好永远不要对来自第三方的字符串求值（用 window.JSON 或者 json.org 提供的解析器处理 JSON 数据而不是用 eval），下面是两个关于内容注入的示例：
+
+```JavaScript
+// 危险，e.data 里的内容可能会被当成标记
+elem.innerHTML = e.data
+// 相对安全
+elem.textContent = e.data
+```
+
+#### 浏览器兼容检测
+
+```JavaScript
+if (typeof window.postMessage === undefined) {
+  // 浏览器不支持 postMessage
+}
+```
+
+### 5.2 XMLHttpRequest Level 2
+更多关于 XMLHttpRequest 编程的知识，建议阅读 John Resing 撰写的 《Pro JavaScript Techniques》 (Apress, 2006)（中文版《精通 JavaScript》，ISBN: 9787115175403）。
+
+作为 XHR 的改进版，XHR Level 2 在功能上有了很大的改进。这一章主要讲两个方面：跨源 XHR 与进度事件 (progress events)。
+
+#### CORS(Cross Origin Resource Sharing)
+跨源 HTTP 请求包括一个 Origin 头部，它为服务器提供 HTTP 的“源”信息。头部由浏览器保护，不能被应用程序代码修改。从本质上讲，它与跨文档消息通信中消息事件的 origin 属性作用相同。Origin 不同于早先的 Referer[src] 头部，因为后者 Referer 是一个包括了路径的完整 URL。由于路径可能饱含敏感信息，为了保护用户隐私，浏览器并不一定会发送 Referer ，而浏览器在任何必要的时候都会发送 Origin 头部。
+
+跨域交换的 HTTP 头部示例：
+
+请求的头部示例：
+```
+POST /main HTTP/1.1
+Host: www.example.net
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.3) Gecko/20090910 Ubuntu/9.04
+(jaunty) Shiretoko/3.5.3
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Referer: http://www.example.com/
+Origin: http://www.example.com
+Pragma: no-cache
+Cache-Control: no-cache
+Content-Length: 0
+```
+
+响应的头部示例：
+```
+HTTP/1.1 201 Created
+Transfer-Encoding: chunked
+Server: Kaazing Gateway
+Date: Mon, 02 Nov 2009 06:55:08 GMT
+Content-Type: text/plain
+Access-Control-Allow-Origin: http://www.example.com
+Access-Control-Allow-Credentials: true
+```
+
+#### Progress event
+新版 XHR 最重要的改进之一是增加了对进度的响应。在 XHR 之前的版本中，仅有 readystatechage 一个事件能够被用来响应进度。更糟糕的是，浏览器对该事件的实现并不兼容，如在 IE 中永远不会触发 readystate 3（表示所有响应头部都收到，响应体开始接收但未完成），此外，readystate 的更改事件缺乏与上传进程通信的方法，在这样的情况下实现进度条是一件麻烦的事情，而且开牵扯到服务器端的编程开发。
+
+XHR Level 2 用了一个有意义的名字 Progress 进度来命名进度事件，以下为新进度的名称：
+
+* loadstart
+* progress
+* abort
+* error
+* load
+* loaded
+
+可以通过这些事件实现对事件的监听。
+
+出于向后兼容的目的，新版本中 readyState 属性和 readystatechange 事件可以保留。
+
+#### XHR Level 2 的浏览器支持情况检测
+
+```JavaScript
+var xhr = new XMLHttpRequest();
+if (typeof xhr.withCredentials === undefined) {
+  // 浏览器不支持...
+}
+```
+
+### 5.3 进阶功能
+早期版本的 postMessage 仅支持字符串。后来的版本支持 JavaScript 对象、canvas imageData 和文件等其他数据类型。*由于不同浏览器对规范支持程度的差异，对不同的对象类型的支持情况也不同。*
+
+Framebusting 技术可以用来保证某些内容不被加载到 iframe 中：
+
+```JavaScrpt
+if (window !== window.top) {
+  window.top.location = location;
+}
+```
+
+不过，你可能会希望借助 iframe 导入一些确定的合作网站的页面来充实自身的内容，以下是一种使用 postMessage 实现 iframe 与其父页面间的握手通信：
+
+```JavaScript
+var framebustTimer, timeout = 3000;
+if (window !== window.top) {
+  framebustTimer = setTimeout(
+    function() {
+      window.top.location = location;
+    }, timeout
+  );
+}
+window.addEventListener("message", function(e) {
+  switch(e.origin) {
+    case trustedFramer:
+      clearTimeout(framebustTimer);
+      break;
+  }
+}, true);
+```
+
+## 第六章 WebSockets API
