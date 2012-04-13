@@ -542,3 +542,82 @@ if (window.WebSocket == null) {
 }
 ```
 ## 第七章 Forms API
+### 7.1 HTML5 Forms 概述
+#### XForms
+XForms 是一个以 XML 为核心、功能强大却略显复杂的标准，它用于规范客户端表单的行为，而专门的 W3C 工作组研究这些行为已经近十年。XForms 充分的利用了 XML Schema ，制订了针对验证和格式化的精确准则。不过，很遗憾，在没有安装插件的情况下，主流浏览器均不支持 XForms。
+
+#### HTML5 Forms 的核心设计理念
+规范的核心是功能性动作和语义，而非外观和显示效果。
+
+HTML5 表单规范更加注重对现有的简单 HTML 表单功能的改进，力求使之饱含更多控件类型。
+
+但它并没有规定浏览器应该以何种方式将这些元素呈现给用户。这种做法的好处是：浏览器会竞相改善用户交互方式、分离了样式和语义、在面对专用用户输入设备时，能够灵活调整交互方式。
+
+### 7.2 使用 HTML5 Forms API
+#### HTML5 新增的 Forms 元素
+在 W3C 网站上可以找到 HTML5 中所有新增和修改的元素，具体地址为： http://dev.w3.org/html5/markup/ 。
+
+当浏览器不支持下列 type 属性的值时，标签会退回到文本输入框
+
+* tel：电话号码
+* email：电子邮件地址
+* url：网页的 URL
+* search：用于搜索引擎，比如在站点顶部显示搜索框
+* range：特定值范围内的数值选择器，典型显示方式是滑动条
+* number：只能饱含数值的文本框
+* color：颜色选择器，基于调色盘或者取色板进行选择
+* datetime：显示完整的日期和时间，包括时区
+* datetime-local：显示日期和时间，不含时区
+* time：不含时区的时间选择器和指示器
+* date：日期选择器
+* week：某年中的周选择器
+* month：某年中的月选择器
+
+#### list 属性和 detaillist 元素
+通过组合使用 list 和 detaillist 标签，开发人员能够为某个输入型控件构造一张选值列表。使用方法如下：
+
+* 创建一个带 id 的 detaillist 元素
+* 添加若干 option 作为 detaillist 的子元素
+* 将 input 元素的 list 属性值设为 detaillist.id
+
+#### valueAsNumber 函数
+valueAsNumber 函数的作用是完成控件值类型在文本和数值间的相互转换。它既是 setter 又是 getter ，作为 getter 时，将文本转换为数值，如果转换失败，则返回 NaN 。
+
+#### 表单验证
+在支持 HTML5 表单验证的浏览器中，可以通过表单控件来访问 ValidityState 对象：`var valCheck = document.myForm.myInput.validity;`。对象包含了对所有八种验证状态的引用，如果八个约束条件全部通过，那么 `valCheck.valid` 的值就为 true ，否则就是 false 。ValidityState 对象是一个实时更新的对象。获得某表单元素的 ValidityState 对象后，当表单元素内容发生变化时，可以通过它来获得更新后的检测结果。
+
+具体八种约束条件可以看这里：http://www.itivy.com/html5/archive/2011/12/24/html5-form-validate.html
+
+#### 验证反馈
+只要发生表单验证（不管是在提交表单还是直接调用 checkValidity 函数），所有未通过验证的表单都会接收到一个 invalid 事件。可以通过 event 对象的 srcElement 属性得到表单元素，进而得到 validityState 对象。
+
+#### 关闭验证
+表单本身可以通过代码方式设置 noValidate 属性，所有的验证逻辑都会被放弃，只会单纯的提交表单。
+
+更好的办法是在如表单提交按钮控件上设置 formNoValidate 属性，比如：`<input type="submit" formnovalidate />` 。
+
+### 7.3 构建 HTML5 Forms 应用
+#### 进阶功能 setCustomValidity
+通过 setCustomValidity 函数可以设置 ValidityState 对象的 customError 属性。
+
+## 第八章 Web Workers API
+Web Workers 不能直接访问 Web 页面的 DOM API （应该是出于安全性的考虑）。虽然 Web Workers 不会冻结窗口，但仍然会消耗 CPU 周期，导致系统反应速度变慢。
+
+Web Worker 适用于执行不影响 Web 页面交互性的后台的数据处理和监听由后台服务器广播的新闻信息。
+
+### 8.2 使用 HTML5 Web Workers API
+Web Workers 的使用方法非常简单，`new Worker("XXX.js")` 创建 Web Workers 对象，传入希望执行的 JavaScript 文件即可。
+
+Web Workers 初始化时会接受一个 JavaScript 文件的**同源** URL 地址，其中包含了供 Worker 执行的代码。*这段代码会设置事件监听器，并与生成 Worker 的容器进行通信。*
+
+Web Workers 之间、Web Workers 与页面的数据交换需要通过 postMessage 函数传递。
+
+#### 浏览器支持性检查
+
+``` JavaScript
+if (typeof Worker !== "undefined") {
+  // code ...
+}
+```
+
+#### 
