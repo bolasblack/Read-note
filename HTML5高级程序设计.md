@@ -620,4 +620,238 @@ if (typeof Worker !== "undefined") {
 }
 ```
 
-#### 
+#### importScript
+Web Workers 由于没有访问 document 的权限，所以 Worker 中必须使用另外的方法导入其他 JavaScript 文件。 `importScript("helper.js");`
+
+导入的 JavaScript 只会在某个已有的 Workers 中加载和执行。
+
+importScript 可以通过多个参数导入多个脚本，它们会按顺序执行。
+
+### 8.3 编写主页
+#### 终止 Worker
+可以调用 Worker 的 `terminate` 函数实现终止 Web Workers，被终止的 Web Workers 不再响应任何信息或者执行任何其他的计算，也无法重新启动。但可以使用同样的 URL 创建一个新的 Worker。
+
+#### Worker 脚本中能够访问到的 API
+Worker 的 API 能够在 Web Workers 脚本中被访问到（可以用来创建子 Worker）
+
+Worker 能够访问到属于 window 对象的定时器 API ，如 setTimeout 函数
+
+
+## 第九章 Web Storage API
+Web Storage 的使用和相关信息并不像上面提到的若干 API 那么少见，而且浏览器对它的支持也是比较全面的，从 IE8 开始，Chrome 3.0，Firefox 3.0，Opera 10.5，Safari 4.0 已经全线支持。不少网站已经开始投入使用。
+
+### 9.3 使用 HTML5 Web Storage API
+#### 设置和获取数据
+Web Storage 主要分为 sessionStorage 和 localStorage 两个种存储模式，都可以通过 `setItem(key, value)` 、 `getItem(key)` 和 `removeItem(key)` 进行操作。`clear()` 函数会删除存储列表中的所有数据。
+
+存储在 sessionStorage 中的数据，当浏览器或标签页关闭后就不复存在。同时，数据也只能在构建它们的窗口或者标签页内可见。
+
+存储在 localStorage 中的数据，能够被同源的每个窗口或者标签页共享，同时，关闭窗口或者标签页也不会令数据消失。
+
+#### 更多磁盘空间配额
+HTML5 规范中建议浏览器允许每组同源页面使用 5MB 的空间，达到空间配额时浏览器应提示用户分配更多空间，同时提供查看已用空间的方法。
+
+事件的实现方式多少有些出入。有些浏览器在不告知用户的情况下允许页面使用更多空间，有些则向用户提示已经扩展了空间，而另外一些则只是抛出 QUOTA _EXCEEDED _ERR 错误。
+
+#### 事件
+添加事件监听器即可接收同源窗口的 Storage 事件：
+
+```JavaScript
+window.addEventListener("storage", displayStorageEvent, true);
+```
+
+Storage 事件的接口形式如下所示
+
+```
+interface StorageEvent:Event{
+    readonly attribute DOMString key;       //更新或删除的键
+    readonly attribute any oldValue;        //更向前键对应的数据，如果是新添加的数据，则为 null
+    readonly attribute any newValue;        //更新后的数据
+    readonly attribute DOMString url;       //指向 Storage 事件发生的源
+    readonly attribute Storage storageArea; //一个引用，指向发生改变的 localStorage 或 sessionStorage
+}
+```
+
+### 9.5 浏览器数据库存储展望
+> 虽然 Web SQL Database 已经在 Safari、Chrome 和 Opera 中实现，但是 Firefox 中并没有实现它，而且它在 WHATWG 维基中也被列为 “停滞” 状态。HTML5 规范中定义了一个执行 SQL 命令的 API ，接收字符串形式的输入，遵从 SQLite 对 SQL 语句的解析规范。由于标准认定直接执行 SQL 不可取， Web SQL Database 已经被较新的规范——索引数据库 (Indexed Database，原为 WebSimpleDB) 所取代。索引数据库更简便，而且也不依赖于特定的 SQL 数据库版本。目前浏览器正在逐步实现对索引数据库的支持。 —— Frank
+
+## 第十章 构建离线 Web 应用
+### 10.2 使用 HTML5 离线 Web 应用 API
+#### 检查浏览器支持情况
+
+``` JavaScript
+if (window.applicationCache) {
+  // code ...
+}
+```
+
+#### html 元素的 manifest 属性
+想要为 HTML5 应用程序添加离线支持，那么需要在 html 元素中加入 manifest 属性，属性的值为缓存清单文件：
+
+``` HTML
+<!DOCTYPE html>
+<html manifest="application.manifest">
+...
+</html>
+```
+
+缓存清单内容示例：
+
+```
+CACHE MANIFEST
+example.html
+example.js
+example.css
+example.gif
+```
+
+#### 判断是否在线
+是否处于在线状态可以通过检测 window.navigator 对象的属性进行判断。 
+
+`navigator.onLine` 是一个标明浏览器是否处于在线状态的布尔属性。它甚至可以在 IE 中使用。（TODO：IE 几？）
+
+当然， onLine 的值为 true 并不能保证 Web 应用程序在用户机器上一定能够访问到相应服务器（是在说中国吗？）。
+
+当其值为 false 时，不管浏览器是否真的有联网。应用程序都不会尝试进行网络连接。
+
+当在线状态发生变化时，触发 "online" 或者 "offline" 事件。
+
+#### manifest 文件
+manifest 文件的 MIME 类型为 text/cache-manifest 。
+
+*需要注意， manifest 文件的内容类型必须配置为 text/cache-manifest 发送到浏览器。如果文件类型不正确，即使浏览器支持应用缓存也会返回缓存错误。*
+
+manifest 文件示例：
+
+```
+#注释以#开头
+CACHE MANIFEST
+#要缓存的文件
+about.html
+html5.css
+index.html
+happy-trails-rc.gif
+lake-tahoe.jpg
+   
+#不缓存登录页面
+NETWORK
+signup.html
+   
+#提供获取不到缓存资源时的备选资源路径
+FALLBACK
+signup.html    offline.html
+/app/ajax/     default.html
+```
+
+#### applicationCache API
+applicationCache API 是一个操作应用缓存的接口。新的 window.applicationCache 对象可触发一系列与缓存状态相关的事件。
+
+该对象有一个数值型属性 window.applicationCache.status ，代表了缓存的状态。共有 6 种：
+
+* 0: UNCACHED（未缓存） // 没有指定缓存清单的状况
+* 1: IDLE（空闲）       // 带有缓存清单的应用程序的典型状态
+* 2: CHECKING（检查中）
+* 3: DOWNLOADING（下载中）
+* 4: UPDATEREADY（更新就绪）
+* 5: OBSOLETE（过期）   // 缓存曾经有效，但现在 manifests 文件丢失
+
+对于上述状态，API 包含了与之对应的事件（和回调特性）。
+
+* onchecking      CHECKING
+* ondownloading   DOWNLOADING
+* onupdateready   UPDATEREADY
+* onobsolete      OBSOLETE
+* oncached        IDLE
+
+此外，没有可用更新或者发生错误时，还有一些表示更新状态的事件：
+
+* onerror
+* onnoupdate
+* onprogress
+
+window.applicationCache 有一个 `update()` 方法。调用 `update()` 方法会请求浏览器更新缓存。包括检查新版本的 manifest 文件并下载必要的新资源。如果没有缓存或者缓存已经过期，则会抛出错误。
+
+## 第11章 HTML5未来展望
+只能这么说，不论 HTML5 未来是否前途光明，它始终是前端攻城湿的饭碗。
+
+### 触摸屏设备事件
+Apple 在推出 iPhone 的同时，也将一系列的特殊事件引入到了其浏览器中。这些事件用来处理多点触摸输入和设备旋转。尽管还没有标准化，但这些事件已经被其他移动设备厂商选用。
+
+#### 方向事件
+在方向事件处理中，可以引用 `window.orientation` 属性。属性可选值如下所示，它们以页面首次加载时设备的方向为基准：
+
+* 0     页面当前方向与首次加载时的原始方向一样
+* -90   与原始方向比，设备顺时针旋转了 90 度（向右）
+* 180   与原始方向比，设备旋转了 180 度（垂直翻转）
+* 90    与原始方向比，设备逆时针旋转了 90 度（向左）
+
+#### 手势事件
+手势事件可以理解为通过多点触摸引发的缩放或者旋转。当用户有两个或多个手指同时在屏幕上挤压 (pinch) 或扭转 (twist) 时，就会触发手势事件。
+
+扭转表示旋转，挤压 (pinch in) 和伸展 (pinch out) 分别表示缩小和放大。以下为事件处理程序：
+
+* ongesturestart  用户将多个手指放在触摸屏上，开始滑动
+* ongesturechange  用户正在使用手指动作进行缩放或者旋转操作
+* ongestureend  用户移开手指，缩放或旋转操作已经完成
+
+在用户做手势的过程中，事件处理程序或灵活检测事件的缩放或旋转属性，并对显示效果进行相应更新。以下为手势处理函数示例：
+
+```JavaScript
+function gestureChange(event) {
+  // 获取用户手势生成的缩放量
+  // 1.0 代表初始大小，小于 1.0 表示缩小，大于 1.0 表示放大
+  // 基于尺寸大小按比例放大缩小
+  var scale = event.scale;
+  
+  // 获取用户手势生成的旋转量
+  // 旋转值介于 0 度到 360 度之间
+  // 正值代表顺时针旋转，负值代表逆时针方向旋转
+  var rotation = event.rotation;
+  
+  // 基于旋转操作更新页面显示
+}
+// 为文档节点添加手势变化监听程序
+node.addEventListener('gesturechange', gestureChange, false);
+```
+
+#### 触摸事件
+如果需要在低层次上处理设备事件，可以通过触摸事件获取所需信息。
+
+* ontouchstart    已经在触摸设备表面放置了一个手指。当多个手指放在设备上时，会发生多点触摸事件
+* ontouchmove     在拖动操作中，一个或多个手指发生了移动
+* ontouchend      一个或多个手指离开设备表面
+* ontouchcancel   意外停止了触摸操作
+
+触摸事件需要考虑多点数据同时出现的情况，因此，用于处理触摸事件的 API 会相对复杂一点。
+
+```JavaScript
+function touchMove(event) {
+  // touches 变量是一个列表，包含了当前每个手指的触摸点信息
+  var touches = event.touches;
+  
+  // changedTouches 列表包含了当前触摸状态发生变化的手指的触摸点信息，如添加、移开或重放手指
+  var changedTouches = event.changedTouches;
+  
+  // 监听器注册在哪个节点上， targetTouches 就包含哪个节点上发生的触摸操作的触摸点信息
+  var targetTouches = event.targetTouches;
+  
+  // 在取得预定触摸点以后，可以取得能够从其他事件对象中正常获取的大部分信息
+  var firstTouch = touches[0],
+      firstTouchX = firstTouch.pageX,
+      firstTouchY = firstTouch.pageY;
+}
+// 注册一个触摸事件监听器
+node.addEventListener("touchmove", touchMove, false);
+```
+
+### 其他的书中提到的未来：
+
+#### WebGL
+##### 3D HTML
+##### 3D 着色器
+
+#### 设备
+##### 音频数据 API
+##### 视频元素改进
+##### P2P 网络
+
