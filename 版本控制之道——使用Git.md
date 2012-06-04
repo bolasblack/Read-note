@@ -151,6 +151,12 @@ Git 会输出初始的提交名称和初始的文件名。给 `git log` 传入�
 命令 `git rebase -i` 能够以人机交互的方式改写历史记录。具体内容可以看 [《Git 魔法》的 rebase 介绍](http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/ch05.html) 。
 
 ## 第七章 与远程版本库合作
+### 7.5 添加新的远程版本库
+在本地版本库中，远程版本库的别名默认是 origin 。它是克隆远程版本库时自动生成的。
+
+命令 `git remote add <别名> <版本库全称>` 用于为远程版本库添加别名。
+
+命令 `git remote rm` 用于删除别名。
 
 ## 第八章 管理本地版本库
 
