@@ -148,7 +148,7 @@ Git 会输出初始的提交名称和初始的文件名。给 `git log` 传入�
 如果传入 `--hard` 参数，Git 会从版本库和工作目录同时删除提交，不可恢复。
 
 ### 6.7 重新改写历史记录
-命令 `git rebase -i` 能够以人机交互的方式改写历史记录。具体内容可以看 [《Git 魔法》的 rebase 介绍] 。
+命令 `git rebase -i` 能够以人机交互的方式改写历史记录。具体内容可以看 [《Git 魔法》的 rebase 介绍](http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/ch05.html) 。
 
 ## 第七章 与远程版本库合作
 
