@@ -190,6 +190,7 @@ $ git archive --format zip \
 来产生一个 zip 文件。
 
 ### 9.3 分支变基
+#### 同步分支间的提交记录
 要同步分支之间的历史，除了使用 Git 提供的合并分支功能，还可以使用变基操作。
 
 ```bash
@@ -197,3 +198,28 @@ $ git rebase <branchName>
 ```
 
 变基的意思是“改变分支的基底”，把一条分支上的修改在另一条分支的末梢重现。你可以把这种方式看作是基于一个新的基点，重演分支上发生过的改动。
+
+除了同步历史以外， `git rebase` 还拥有修改历史的能力，具体可以参考 [6.7 重新改写历史记录](#67-重新改写历史记录)。
+
+#### 剥离分支
+命令 `git rebase` 命令还提供了一个 `--into` 参数，用于将分支3与分支2的提交记录差值变基到分支1上。
+
+例如，有三条分支，主分支 master ，从 master 拉出来的 contacts 和从 contacts 拉出来的 search 分支。
+
+当完成 search 分支上的代码时，发现不需要任何在 contects 分支上完成的改动，搜索功能即可运行。
+
+这时就可以输入以下命令，将 search 分支变基到 master 。
+
+```bash
+$ git rebase --into master contacts search
+```
+
+这个命令是将 search 分支从 contacts 分支剥离，移动到主分支上，如果要合并 search 分支上的内容到 master 上，不需要 contacts 上的任何东西，可以使用此方法。当然，search 分支要完全独立于 contacts 分支，尽量避免变基到 master 时出现合并冲突。
+
+还可以使用 [6.2 指定查找范围](#62-指定查找范围) 中提到的 *提交范围参数* ，来做一些其他有趣的事情，比如抹消倒数第二个提交。
+
+```bash
+$ git rebase --into HEAD^^ HEAD^ HEAD
+```
+
+### 9.4 重现隐藏的历史
