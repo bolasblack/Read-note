@@ -68,7 +68,7 @@ $ git cherry-pick <commit SHA-1>
 
 可以使用 `git mergetool` 工具来解决复杂的冲突，不同的系统不同的环境会有不同的工具，Git 会尽可能的找到每一个合并工具。
 
-也可以在全局设置里配置 merge.tool 的值 `git config --global merge.local <mergetoolName>`。
+也可以在设置里配置 merge.tool 的值
 
 所有合并工具得到的结果应该都差不多，都是显示各冲突区域，供用户选取定夺。
 
@@ -81,6 +81,7 @@ $ git cherry-pick <commit SHA-1>
 ### 6.2 指定查找范围
 在 `git log` 后面可以跟上以下参数用于指定查找范围：
 
+* `-<数字>` 显示最近若干条提交
 * `--since` 最近的时间内的提交
 * `--before` 多少时间前的最后一个提交
 * `<commit1 SHA-1>..<commit2 SHA-1>` 检索从 commit1 到 commit2 之间的提交（不包括 commit1）
@@ -97,6 +98,8 @@ $ git cherry-pick <commit SHA-1>
 可以混合使用两种操作符。
 
 ### 6.3 查看版本之间的差异
+在 `git log` 命令中加入 `-p` 参数，能够显示版本间的内容差异。
+
 在 `git diff` 中指定版本范围和 `git log` 一样，唯一差别是 `git diff` 输出的是最老版本和最新版本之间的差异。
 
 在 `git diff` 中使用标签作为参数，是一种获取发布版本之间代码量统计的好方法，通过加入一个 `--stat` 参数，可以计算出修改和删除的代码行数。如果只传入一个参数，Git 会默认把工作目录树作为参数。
@@ -254,3 +257,57 @@ $ git bisect run /work/run-test
 ```
 
 推荐将测试文件放在仓库之外，以确保 Git 不会改变 `git bisect` 正在运行的脚本文件。
+
+## 附录A Git 命令快速参考
+### 1 安装和初始化
+#### 全局的配置
+
+```bash
+$ git config --global <configName> <configValue>
+```
+
+#### 局部的配置
+只作用于特定版本库的配置
+
+```bash
+$ git config <configName> <configValue>
+```
+
+### 2 日常操作
+#### 暂存已纳入 Git 版本控制之下的文件的修改
+
+```bash
+$ git add -u [<some path> [<some path>]]
+```
+
+#### 清除工作目录树的修改
+
+```bash
+$ git checkout HEAD <some file> [<some file>]
+```
+
+#### 取消已暂存但尚未提交的修改的暂存标识
+
+```bash
+$ git reset HEAD <some file> [<some file>]
+```
+
+#### 使用上次的提交注释
+
+```bash
+$ git commit -c
+```
+
+如果不想修改，直接使用的话，就将 `-c` 参数变为 `-C` 参数。
+
+### 3 分支
+你可以从版本库的任何一个版本开始创建新分支。起始点可以用 分支名称、提交名称或者标签名称。
+
+```bash
+$ git branch <new branch> <start branch>
+```
+
+加入 `-f` 参数可以创建同名新分支，覆盖已有分支。
+
+加入 `-m` 用于移动或重命名分支， `-M` 用于重命名时覆盖已有分支。
+
