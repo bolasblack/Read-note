@@ -311,3 +311,12 @@ $ git branch <new branch> <start branch>
 
 加入 `-m` 用于移动或重命名分支， `-M` 用于重命名时覆盖已有分支。
 
+## 附注（也就是书中没有的）
+### hook
+有关 hook 的内容，可以看 《Pro Git》 的 [7.3 自定义 Git - Git挂钩](http://git-scm.com/book/zh/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-Git%E6%8C%82%E9%92%A9)。
+
+### diff 二进制文件
+See Also [7.2 自定义 Git - Git属性#二进制文件](http://git-scm.com/book/zh/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-Git%E5%B1%9E%E6%80%A7#二进制文件)
+
+### 在文件签出/提交前根据关键字自动插入文本
+See Also [7.2 自定义 Git - Git属性#关键字扩展](http://git-scm.com/book/zh/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-Git%E5%B1%9E%E6%80%A7#关键字扩展)
