@@ -10,31 +10,44 @@ I'm releasing this a bit early, since I'm heading to Nodeconf. In my writing, I 
 
 这本书在我去过 Nodeconf 后我就发布了，在我写这本书的时候，我可能会有点自以为是，but i am happy to be proven wrong，你的反馈就是最好的赞赏了。
 
-Introduction
+Introduction 大纲
 
-  * Modern single page apps - an overview
+  * [Modern single page apps - an overview](http://singlepageappbook.com/goal.html)
+  * 现代单页面应用程序 - 一个总览
 
-Writing maintainable code
+Writing maintainable code 编写可维护的代码
 
-  * Maintainability depends on modularity: Stop using namespaces!
-  * Getting to maintainable
-  * Testing explained
+  * [Maintainability depends on modularity: Stop using namespaces!](http://singlepageappbook.com/maintainability1.html)
+  * 可维护性依赖于模块化：别再用命名空间啦
+  * [Getting to maintainable](http://singlepageappbook.com/maintainability2.html)
+  * 让代码开始变得可维护起来吧
+  * [Testing explained](http://singlepageappbook.com/maintainability3.html)
+  * 有关测试的解释
 
-Implementation alternatives: a look at the options
+Implementation alternatives: a look at the options 实现原理二选一：看看选项
 
-  * The view layer
-  * The model layer
+  * [The view layer](http://singlepageappbook.com/detail1.html)
+  * 视图层
+  * [The model layer](http://singlepageappbook.com/detail2.html)
+  * 模型层
 
-Meditations on Models & Collections
+Meditations on Models & Collections 关于模型和集合的思考
 
-  * Implementing a data source
-  * Implementing a model
-  * Implementing a collection
-  * Implementing a data cache
-  * Implementing associations
+  * [Implementing a data source](http://singlepageappbook.com/collections1.html)
+  * 实现一个一个数据源
+  * [Implementing a model](http://singlepageappbook.com/collections2.html)
+  * 实现一个模型
+  * [Implementing a collection](http://singlepageappbook.com/collections3.html)
+  * 实现一个集合
+  * [Implementing a data cache](http://singlepageappbook.com/collections4.html)
+  * 实现一个数据缓存
+  * [Implementing associations](http://singlepageappbook.com/collections5.html)
+  * 实现关联
 
-Views - templating, behavior and event consumption
+Views - templating, behavior and event consumption 视图 - 模板，行为和事件消费
 
-  * Templating: from data to HTML
-  * Behavior: binding DOM events to HTML and responding to events
-  * Consuming events from the model layer: communication between views and re-rendering views in response to model data changes
+  * [Templating: from data to HTML](http://singlepageappbook.com/views1.html)
+  * 模板：从数据到 HTML
+  * [Behavior: binding DOM events to HTML and responding to events](http://singlepageappbook.com/views2.html)
+  * 行为：在 HTML 上绑定 DOM 事件以及反馈给事件
+  * [Consuming events from the model layer: communication between views and re-rendering views in response to model data changes](http://singlepageappbook.com/views3.html)
