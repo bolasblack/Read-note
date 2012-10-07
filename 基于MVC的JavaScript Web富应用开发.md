@@ -371,6 +371,84 @@ App =
 
 ## 第十章 部署
 
+### 性能
+
+> 提高性能，最简单也是最显著的方法是：减少 HTTP 请求的数量。
+
+> 保持最小的独立链接数可以保证用户的页面加载速度最快。
+
+> 让页面和其资源文件保持较小的体积将减少网络用时——对任何互联网上的应用而言，这才是真正的瓶颈。
+
+合并 JavaScript 文件，合并 CSS 文件，制作 CSS Sprites ，都是为了这个目的。
+
+> 避免重定向也是减少 HTTP 请求和数量的方法。你或许认为这很少见，其实 URL 结尾缺少斜线（/）是一个非常常见的重定向场景，而这个斜线不应当被丢掉。
+
+### 缓存
+
+> 缓存就是将最近请求的资源存储到本地，以便接下来的请求能从磁盘中使用这些资源，而不用再次去下载。**明确地告诉浏览器什么是可以被缓存的是很重要的。**
+
+> 针对静态资源，可通过添加一个表示“在很远的将来才过期”的 Expires 头，让缓存“永不”失效。
+
+> HTTP 1.1 引入了一类新的头，Cache-Control。它带给开发者更高级的缓存，同时还弥补了 Expires 的不足。Cache-Control 的控制头有很多选项，可用逗号隔开。
+
+> 查看全部的选项，请访问规范 (http://www.ietf.org/rfc/rfc2616.txt)
+
+> 给提供服务的资源增加 Last-Modified 头信息也有助于缓存。
+
+> Last-Modified 的替代方案是 ETag 。
+
+但由于 ETag 通常是使用服务器指定的一些属性来构建的，所以两个独立服务器对同样的资源生成的 ETag 可能不一样。随着服务器集群越来越普遍，这成为一个现实问题，所以更推荐 Last-Modified 而非 ETag 。
+
+### 源码压缩 (Minification)
+
+> 文件越小越好，因为在网络上传输的数据越少越好。
+
+> 译注1：
+
+> 对于带有中文的 JavaScript 文件来说，仅做源码压缩是不够的，还需要对文件做 Unicode 转码，以保证压缩后的文件不会因为编码问题引入 BUG 。此外，由于每个项目中的 JS 文件往往比较多，也需要一些批量压缩工具来提高效率，这里推荐一个工具 [TPacker](http://github.com/jayli/Tpacker) 。
+
+个人比较推荐的组合是 [uglyfy.js](https://github.com/mishoo/UglifyJS) 和 [clean-css](https://github.com/GoalSmashers/clean-css) ，至于为什么么……其实最重要的原因是它们都是 JavaScript 写的。
+
+### Gzip 压缩
+
+> 在 Web 上 Gzip 是最流行并且支持最广泛的压缩方式。它是由 GNU 项目组开发的，在 HTTP/1.1 中开始对其支持。
+
+> 显然，压缩数据可以减少网络传送时间，但这并没大范围的得以实现。Gzip 通常能减少 70% 的体积，巨大的体积缩减极大地加速了网站的加载速度。
+
+> 服务器通常已经配置了哪些文件应该被压缩。一条不错的经验就是压缩任何文本类型的响应，例如 HTML、JSON、JavaScript 和样式表。如果文件已经被压缩，例如图片和 PDF ，则不应该再用 Gzip 压缩了，因为体积不会再减小了。
+
+### 使用 CDN
+
+> 内容分发网络（或叫 CDN ）为你的站点提供静态资源内容服务，以减少它们的加载时间。用户和 Web 服务器之间的距离对加载时间有直接的影响。CDN 将你的内容部署在跨越多个地理位置的服务器上，故当用户发起一个请求时，可从就近的服务器得到响应资源（理想情况是在同一个国家中）。Yahoo! 已经发现 CDN 可以减少终端用户 20% 或更多的响应时间 (http://developer.yahoo.com/performance/rules.html#cdn) 。
+
+> Google 为很多流行的开源 JavaScript 库提供了一个免费的 CDN 和加载架构，包括 jQuery 和 jQueryUI 。使用 Google 的 CDN 的其中一个优点就是很多其他网站都在使用它，这会让你要引用的 JavaScript 文件有更多的几率停留在用户浏览器的缓存之中。
+
+这些库都能在 http://code.google.com/apis/libraries/devguide.html 中找到。
+
+在指定 script 标签的 src 时，可以不指定请求的协议，只使用 // ，这看起来会是这样：
+
+```html
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+```
+
+> 这个鲜为人知的技巧使得获取脚本文件时，可以使用和宿主页面一样的协议。换言之，如果页面通过安全的 HTTPS 加载，该脚本文件同样会使用 HTTPS ，从而避免所有的安全警告，没有协议的相对 URL 是合法的，与 RTF 规范兼容。更重要的是，它得到的全盘的支持。见鬼了！相对 URL 甚至在 IE 3.0 中也能工作。
+
+### 审查工具
+
+> 如果你想查看你的网站性能详情，它们能给你眼前一亮的惊喜，比如 [YSlow](http://developer.yahoo.com/yslow) 。
+
+> 该扩展通过一系列的检查来运行，包括缓存、源码压缩、Gzip 压缩和 CDN 等。它将给出网站的评分等级，这依赖于检查过程中的耗费。然后，给出如何提高分数的建议。
+
+> Google Chrome 和 Safari 也有审查工具，但是它们是内置在浏览器中的。
+
+> 在 Chrome 中只要简单地找到 Web Inspector 的 Audits 面板并点击 Run 就行了。
+
+### 外部资源
+
+> Yahoo! 和 Google 都用了大量的研究、调查来分析 Web 性能。
+
+> 两个公司在改善性能上都有优秀的资源，可以在 Google (http://code.google.com/speed/page-speed/docs/payload.html) 和 Yahoo! (地址没有在中文版里写出来，我正在找英文版)
+
 [1]: Seajs 是一个模块加载器，在客户端实现了同步 `require()` ，使得客户端也能够遵循 CommonJS 标准规范进行编码开发。Seajs 从 1.2.0 开始能够加载未被包装过的 JavaScript 模块。
 
 [2]: 译注10：作者这里将 LABjs 归类为“依赖管理器”有些勉强，LABjs 给自己的定位是“脚本加载器”，主要是为了解决加载脚本时的性能问题。
