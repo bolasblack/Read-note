@@ -136,11 +136,172 @@ PubSub =
 
 ### 增加 ID 支持
 
-Robert Kieffer 写了一个简单明了的 GUID(Globally Unique Identifier) [生成器](http://goo.gl/0b0hu)，它使用 `Math.random()` 来产生一个伪随机数的 GUID
+Robert Kieffer 写了一个简单明了的 GUID(Globally Unique Identifier) [生成器](http://goo.gl/0b0hu)，它使用 `Math.random()` 来产生一个伪随机数的 GUID 。
 
 ## 第四章 控制器和状态
 
-略。
+> 将状态保存在客户端其中一个主要好处是带来更快速的界面响应。
+
+> 但将状态保存在客户端也存在诸多挑战。状态保存在哪里？
+
+> 首先，应当避免将状态或数据保存在 DOM 中，因为根据滑坡理论[9]，这会导致程序逻辑变得更加错综复杂且混乱不堪。
+
+这个我有点不理解啊，这两者真的有什么关系么？
+
+> 在我们的例子中使用了 MVC 架构来搭建应用，状态都是保存在应用的控制器里的。
+
+> 到底什么是控制器？你可以将控制器理解为应用中视图和模型之间的纽带。只有控制器知道视图和模型的存在并将它们连接在一起。
+
+> 控制器是模块化的且非常独立，了解这一点非常重要。理想状况下不应该定义任何全局变量，而应当定义完全解耦的功能组件。模块模式是处理组件解耦的非常好的方法。
+
+### 模块模式
+
+> 模块模式是用来封装逻辑并避免全局命名空间污染的好方法。
+
+其实就是用匿名函数包起来。额外的好处是可以把 window 和 document 等对象传进来然后取个别名，省得打那么长的名字。
+
+### 添加少量上下文
+
+> 使用局部上下文是一种架构模块很有用的方法，特别是当需要给事件注册回调函数时。实际情况是，模块中的上下文都是全局的。
+
+> 如果想自定义作用域的上下文，则需要将函数添加至一个对象中。比如：
+
+```coffeescript
+(->
+  mod =
+    load: (func) -> $.proxy func, this
+    assetsClick: (event) -> # 处理点击
+  mod.load ->
+    @view = $ "#view"
+    @view.find(".assets").click $.proxy @assetsClick, this
+)()
+```
+
+> 在 `load()` 中的上下文不是全局的，而是 mod 对象。
+
+#### 文档加载完成后载入控制器
+
+> Controller 类不一定非要是构造函数，因为这里并不需要在生成子控制时传入上下文。
+
+```coffeescript
+exports = this
+(($) ->
+  mod = {}
+  mod.create = (includes) ->
+    result = -> @init.apply this, arguments
+    
+    result.fn = result.prototype
+    result.fn.init = ->
+    
+    result.proxy = (func) -> $.proxy func, this
+    result.fn.proxy = result.proxy
+    
+    result.include = (obj) -> $.extend this.fn, obj
+    result.extend = (obj) -> $.extend this, obj
+    
+    result.include(includes) if includes
+    result
+    
+  exports.Controller = mod
+)(jQuery)
+```
+
+```coffeescript
+$ ->
+  ToggleView = Controller.create
+    init: (view) ->
+      @view = $ view
+      @view.mouseover @proxy(@toggleClass), true
+      @view.mouseout @proxy(@toggleClass), false
+    toggleClass: (event) ->
+      @view.toggleClass "over", e.data
+
+  new ToggleView "#view"
+```
+
+> 我们还做了一个重要的更改，就是根据实例化的情况来将视图元素传入控制器，而不是将元素直接写死在代码中。
+
+> 这一步提炼很重要，因为将代码抽离出来，我们就可以将控制器重用于不同的元素，同时保持代码最短。
+
+#### 访问视图
+
+> 一种常见的模式是一个视图对应一个控制器。视图包含一个 ID ，因此可以很容易地传入控制器。然后在视图中的元素则使用 className 而不是 ID ，所以和其他视图中的元素不会产生冲突。这种模式为一种通用实践提供了良好的架构，但用法可以很灵活。
+
+> 本章中所提到的访问视图的方法无非是使用 jQuery() 选择器，将指向视图的本地引用存储在控制器。后续对视图中的元素查找则被视图的引用限制住了范围，从而提高了查找速度。
+
+> 但是，这的确意味着控制器中会塞满很多选择器，需要不断的查找 DOM 。我们可以在控制器中开辟一个空间专门存放选择器到变量的映射表。
+
+> 比如：
+
+```coffeescript
+elements:
+  "form searchForm": "searchForm"
+  "form input[type=text]": "searchInput"
+```
+
+原书中写了一个叫做 `refreshElements()` 的函数，用于更新控制器的 `this.searchForm` 和 `this.searchInput` 变量。可以在初始化控制器是调用，也可以在其他任何时候调用。
+
+可以写一个函数用于创建 elements 映射表中对应的函数，在实例化控制器时调用，调用对应函数就能够获取到指定的元素。这样就能够获取到实例化后才动态创建的元素了。
+
+#### 委托事件
+
+> 同样地，我们可以将绑定的事件都移除，并通过一个 events 对象来代理，这个 events 包含事件类型和选择器到回调函数的映射。这和 elements 对象非常类似，格式是这样的：
+
+```coffeescript
+events:
+  "submit form": "submit"
+```
+
+然后在初始化控制器时，使用 jQuery 的 `delegate()` 函数或者从 1.7 开始出现的 `on()` 函数来委托到控制器绑定的视图根元素上，
+
+### 状态机
+
+状态机，也称之为有限状态机 (Finite State Machines, FSM) ，可以轻松管理很多控制器，根据需要显示和隐藏视图。
+
+状态机本质上有两部分构成：状态和转换器。它只有一个活动状态，但也包含很多非活动状态 (passive state) 。当活动状态之间相互切换时就会调用状态转换器。
+
+如何实现一个状态机？
+
+> 首先使用 jQuery 的事件 API 创建一个 Event 对象，给它添加绑定和触发状态机事件的能力：
+
+```coffeescript
+Event = 
+  bind: ->
+    @o = $({}) unless @o
+    @o.bind.apply @o, arguments
+
+  trigger: ->
+    @o = $({}) unless @o
+    @o.trigger.apply @o, arguments
+```
+
+> 现在我们来创建 StateMachine 类，它包含一个主要的函数 `add()`：
+
+```coffeescript
+StateMachine = ->
+StateMachine.fn = StateMachine.prototype
+
+$.extend StateMachine.fn, Event
+
+StateMachine.fn.add = (controller) ->
+  @bind "change", (event, current) ->
+    if controller is current
+      controller.activate()
+    else
+      controller.deactivate()
+      
+  controller.active = $.proxy (->
+    @trigger "change", controller
+  ), this
+```
+
+> 这个状态机的 `add()` 函数将传入的控制器添加至状态列表，并创建一个 `active()` 函数。当调用 `active()` 时，控制器的状态就转换为激活，对于激活状态的控制器，状态机将基于它调用 `activate()` ，对于其他控制器，状态机则调用 `deactivate()` 。
+
+> 尽管状态机给我们提供了 `active()` 函数，我们同样可以通过手动触发 `change` 事件来改变状态：
+
+```coffeescript
+stateMachine.trigger "change", randomController
+```
 
 ## 第五章 视图和模板
 
@@ -176,6 +337,8 @@ jQuery.tmpl 是由微软开发的，是在 John Resig 的[原始工作](http://g
 ### 绑定
 
 从本质上讲，绑定将视图元素和 JavaScript 对象（通常是模型）挂接在一起。当 JavaScript 对象发生改变时，视图会根据新修改后的对象做适时更新。
+
+但是还存在一种模式称为 "MVVM" (Model-View-ViewModel) ，不但对模型的修改会体现在界面上，界面上的修改同样能够作用在模型中。
 
 ## 第六章 依赖管理
 
@@ -464,3 +627,5 @@ App =
 [7]: 译注20：还有一个非常重要的时间线“页面首次渲染时间”，通常是绿色的线，这条线在 Firebug 和 Web Inspector 中看不到，可以使用 [httpWatch](http://www.httpwatch.com/) 来查看。
 
 [8]: 译注22：和其他编程语言一样，JavaScript 运行时的内存也划分为堆 (heap) 和栈 (stack) 。栈是用来存储局部变量的原始值和“引用”（这里可以将引用理解为一个内存地址）的，而堆则是存放“引用值”（引用指向的内容）的，这里的快照查看的是堆的内容，而不是栈的内容，主要是因为和堆相比栈的内存占用很小。更多内容请参照 http://goo.gl/lbECT
+
+[9]: 译注1：滑坡理论 (slippery slope) 也称为滑坡谬误，是一种逻辑错误，即不合理的使用连串的因果关系，将“可能性”转换为“必然性”，以达到某种意欲只结论。
