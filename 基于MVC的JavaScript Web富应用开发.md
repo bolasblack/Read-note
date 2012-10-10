@@ -303,6 +303,62 @@ StateMachine.fn.add = (controller) ->
 stateMachine.trigger "change", randomController
 ```
 
+### 路由选择
+
+定位单页面应用的 url 不能发生改变，否则会刷新页面，但是用户习惯使用浏览器的前进后退和通过唯一的 url 来获取 web 资源。因此需要将应用的状态反应在 url 的 hash 中，建立状态和 hash 的某种对应关系。
+
+太过频繁地设置 hash 也会影响性能，特别是在移动终端的浏览器中，要注意限制滚动，否则可能会造成页面的频繁滚动。
+
+#### 检测 hash 变化
+
+主流浏览器都支持 window 的 hashchange 事件：
+
+    ie >= 8
+    firefox >= 3.6
+    chrome
+    safari > =5
+    opera >= 10.6
+
+有个 jQuery 插件 http://goo.gl/Sf41P 能够为老浏览器添加 hashchange 支持。
+
+同时，记得初始化页面的时候手动触发这个事件。
+
+#### 抓取 ajax
+
+> 由于很多搜索引擎爬虫程序无法运行 JavaScript ，因此它们也无法得到动态创建的内容。当然页面的 hash 路由也不会起作用。在爬虫程序的眼中，它们看上去都是相同的 URL ，因为 hash 不会发送给服务器。
+
+如果想要搜索引擎能够抓取 JavaScript 程序的内容，<cite>“工程师想到了一个办法，就是创建内容的镜像[10]。</cite> 把这个特殊的页面快照发送给爬虫，而正常的浏览器继续使用 JavaScript 来生成内容。
+
+> 这增加了工程师的工作量，而且要做很多额外工作，比如浏览器嗅探。通常不推荐在应用中添加浏览器嗅探。幸运的是，Google 对引擎做了改进，它提出了“Ajax 抓取规则”(http://goo.gl/rhNr9)。
+
+不管是多么纯净的 HTML 或者文本片段，服务器都可以根据它来定位其资源位置，用这种规则就可以实现资源的索引。
+
+如果以及实现了静态页面版本，可以使用 301 重定向到静态页面地址，这样在搜索结果中就依旧是带有 hash 的 URL 。
+
+一旦给站点增加了对“Ajax 抓取规则”的支持，可以使用 [Fetch as Googlebot tool](http://www.google.com/support/webmasters/bin/answer.py?hl=en&answer=158587) 来检查工作是否生效。
+
+#### 使用 HTML5 History API
+
+> History API 是 HTML5 规范组成的一部分，利用它可以实现将当前地址替换为任意 URL 。你也可以控制是否将新的 URL 添加至浏览器的历史记录中，从而根据需要来控制浏览器的“后退”按钮。和设置地址的 hash 类似，关键是页面不会重新加载，页面状态也会一直保持下来。
+
+> 支持 History API 的浏览器有：
+
+    Firefox >= 4.0
+    Safari >= 5.0
+    Chrome >= 7.0
+    IE: 不支持
+    Opera >= 11.5
+
+这个 API 主要是 `history.pushState()` 函数和 popstate 事件。
+
+popstate 是在页面加载后或者 `history.pushState()` 方法调用是触发的。
+
+具体可以阅读以下资源：
+
+https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history#Adding_and_modifying_history_entries
+
+https://developer.mozilla.org/zh-CN/docs/DOM/window.onpopstate
+
 ## 第五章 视图和模板
 
 ### 模板
@@ -629,3 +685,5 @@ App =
 [8]: 译注22：和其他编程语言一样，JavaScript 运行时的内存也划分为堆 (heap) 和栈 (stack) 。栈是用来存储局部变量的原始值和“引用”（这里可以将引用理解为一个内存地址）的，而堆则是存放“引用值”（引用指向的内容）的，这里的快照查看的是堆的内容，而不是栈的内容，主要是因为和堆相比栈的内存占用很小。更多内容请参照 http://goo.gl/lbECT
 
 [9]: 译注1：滑坡理论 (slippery slope) 也称为滑坡谬误，是一种逻辑错误，即不合理的使用连串的因果关系，将“可能性”转换为“必然性”，以达到某种意欲只结论。
+
+[10]: 译注3：原文这里是 parallel universe 即平行宇宙，意思是说把由 JavaScript 创建的内容再拼成静态的 html 内容。
