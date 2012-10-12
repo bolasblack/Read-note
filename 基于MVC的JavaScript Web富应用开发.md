@@ -437,8 +437,213 @@ jQuery.tmpl 是由微软开发的，是在 John Resig 的[原始工作](http://g
 所以那么多 SPA 都会使用菊花来作为页面初始化时的样式，其他无关紧要的可以直接在行内写上样式 `display: none` ，然后再调用 jQuery 的 `show()` 函数来显示。
 
 ## 第七章 使用文件
+### 浏览器支持
 
-略。
+* Firefox >= 3.6
+* Safari >= 6.0
+* Chrome >= 7.0
+* IE: no supprt
+* Opera >= 11.1
+
+### 获取文件信息
+
+HTML5 的文件操作有一定限制，最主要的是只能访问被用户选中的文件。把文件拖曳进浏览器、选择要输入的文件或者粘贴文件都能满足这个安全限制。
+
+> 尽管已经有人实现了“基于 JavaScript 的文件系统” (http://goo.gl/CbDNt) ，但这里的访问是基于沙箱的。
+
+HTML5 中使用 File 对象来表示文件，有三个属性：
+
+* name: 文件名，只读字符串
+* size: 文件大小，只读整型
+* type: 文件的 MIME 信息，只读字符串，如果没有指定类型就为空字符串
+
+文件路径也是没有办法得到的，如果有多个文件，可以通过 FileList 对象来获取，FileList 对象可以理解为 File 对象组成的数组。
+
+### 文件输入
+
+HTML5 的 input:file 支持多文件选择，只要增加一个 `mulitiple` 属性即可，但这个控件的 UI 不完美，用户需要按住 <kbd>Shift</kbd> 键进行多选，这甚至没有相关的提示。
+
+如果要验证选择的文件的合法性，可以通过 `input.files` 这个只读属性获取 FileList 对象。
+
+### 拖曳
+
+> 早在 1999 年，微软的 IE5 就“设计”并实现了最原始的拖曳，自那时起后续的 IE 版本都支持拖曳。HTML5 规范刚刚增加了拖曳的内容，现在 Safari、Firefox 和 Chrome 也都模仿 IE 的实现提供了拖曳支持。然而，坦白的讲，HTML5 的规范并不明晰 (http://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html) ，需要重新整理。
+
+> 关于拖曳的事件至少有七个：dragstart、drag、dragover、dragenter、dragleave、drop 和 dragend 。
+
+> 即使你的浏览器不支持 HTML5 的文件 API ，但你仍可继续使用拖曳 API ，当前的浏览器支持程度如下：
+
+* Firefox >= 3.5
+* Safari >= 3.2
+* Chrome >= 7.0
+* IE >= 6.0
+* Opera: no support
+
+#### 拖曳
+
+> 拖曳[11]的实现非常简单，可以将元素的 darggable 属性设置为 `true` 来启用元素的拖曳。
+
+我们可以监听 dragstart 事件，调用事件的 `setData()` 函数给可拖曳的元素关联一点数据：
+
+```coffeescript
+$("#dragme").on "dragstart", (event) ->
+  event = event.originalEvent
+  event.dataTransfer.effectAllowed = "move"
+  event.dataTransfer.setData "text/plain", $(this).text()
+  event.dataTransfer.setData "text/html", $(this).html()
+  event.dataTransfer.setDragImage "images/drag.png", -10, -10
+```
+
+事件包含 dataTransfer 对象，其中包含拖曳和释放所需的方法。通过 `setData()` 函数可以设置“互联网媒体类型” (MIMEType) 和一个字符串数据。当元素释放拖曳，就会触发 drop 事件，这时就可以读取这个数据。如果元素拖曳到浏览器外部，其他的应用也可以根据它们支持的文件类型来处理释放拖曳的数据。
+
+拖曳文本的时候推荐使用 text/plain 类型，包括应用的默认类型及释放拖曳的目标不支持其他格式时。
+
+拖曳的链接包含两种格式： text/plain 和 text/uri-list 。通过将每个链接合并为一个新行来拖曳多个链接：
+
+```coffeescript
+event.dataTransfer.setData "text/uri-list", "http://example.com"
+event.dataTransfer.setData "text/uri-list", "http://example.com\nhttp://example.com"
+```
+
+> `setDragImage()` 是可选的，用它可以设置拖曳操作工程中跟随鼠标移动的图片，它的参数是图片源地址和 x/y 坐标，这个坐标是相对于鼠标位置的。如果没有提供，则会将拖曳的元素复制一份并显示为半透明。
+
+> 除了 `setDragImage()` 之外还可以使用 `addElement(element, x, y)` ，它使用给定的元素来更新被拖曳的元素。换句话说，你可以为拖曳操作的过程自定义要显示的元素。
+
+> 同样，可以让用户拖曳浏览器之外的文件，只需设置 DownloadURL 类型即可。你可以将 URL 指定为文件路径，浏览器随后会将它下载下来。
+
+> 坏消息是，只有 Chrome 支持这个特性，且这个特性还在修订之中，但不影响使用。
+
+> DownloadURL 值的格式是由冒号风格的文件列表信息：媒体类型 (MIME) 、名称和地址。
+
+```coffeescript
+$("#preview").on "dragstart", (event) ->
+  event.originalEvent.dataTransfer.setData "DownloadURL", [
+    "application/octet-stream"     # MIME 类型
+    "File.exe"                     # 文件名
+    "http://example.com/file.png"  # 文件地址
+  ].join ":"
+```
+
+#### 释放拖曳
+
+可以在 dragover 事件中通过设置 `event.dataTransfer.dropEffect` 来控制鼠标的样式。
+
+只有撤销（也就是阻止冒泡，取消浏览器默认行为）了 dragenter 和 dragover 事件，才能开始监听 drop 事件。当拖曳的元素或者文件在目标区域释放时才会触发 drop 事件，drop 事件的 `dataTransfer` 对象有一个 `files` 属性，它返回所有拖曳的所有文件的 FileList 。
+
+可以使用 `dataTransfer.getData()` 函数来获取文件的数据，把支持的格式作为参数传入，如果没有这个格式，就会返回 `undefined` 。
+
+`dataTransfer` 对象有一个只读属性 `types` ，包含了设置在 dragstart 事件上的媒体类型格式组成的 DOMStringList （本质上是数组）。此外，如果拖曳了其他的文件，其中一个类型是字符串 "Files" 。
+
+```coffeescript
+dt = event.dataTransfer
+for type in dt.types
+  console.log type, dt.getData type
+```
+
+#### 取消默认的 Drag/Drop
+
+如果想让文件被拖曳到 web 页面时不重定向到这个文件，可以撤销 body 的 dragover 事件：
+
+```coffeescript
+$("body").on "dragover", (event) ->
+  event.stopPropagation()
+  event.preventDefault()
+  false
+```
+
+### 复制和粘贴
+
+支持复制和粘贴的浏览器 API 还没有被标准化，而且没有纳入 HTML5 规范，所以需要做一些兼容性的工作。
+
+IE 从 5.0 时代就开始支持复制和粘贴了。WebKit 效仿了微软的 API 并对它做了一定的增强，而且和拖曳的 API 做了整合。两者除了使用的对象不同以外，几乎一模一样。
+
+> Firefox 不支持复制和粘贴，至少目前不支持，尽管它有一个专用的 API 可以访问剪切板。WebKit (Safari/Chrome) 对复制和粘贴的支持良好，我认为 W3C 最终会将剪切板 API 纳入标准规范。
+
+> 浏览器的支持情况如下：
+
+* Safari >= 6.0
+* Chrome (only pasting)
+* Firefox: no support
+* IE >= 5.0 (different API)
+
+复制、剪切、粘贴的事件各有两个：
+
+* beforecopy
+* copy
+* beforecut
+* cut
+* beforepaste
+* paste
+
+before 前缀的事件能够根据需要选择是否撤销操作。
+
+当用户复制了一些选中的文本时，就触发了 copy 事件，使用 `event.clipboardData` 就可以设置自定义的剪切板数据。
+
+和 `dataTransfer` 对象很相似，`clipboardData` 也有 `setData()` 和 `getData()` 函数，前者的参数是媒体格式和字符串值，如果要调用这个函数，需要阻止浏览器的默认行为；后者主要是用于粘贴时根据媒体格式获取数据。<cite>不幸的是，根据我的测试结果来看，types 属性总是 null ，所以你无法看到剪切板中的数据支持哪种类型。</cite>
+
+WebKit 的 [午夜版](http://nightly.webkit.org/) 允许你访问 `clipboardData` 的 `files` 属性。
+
+IE 将 `clipboardData` 对象设置在 `window` 上，而不是事件上，你需要检查事件中是否存在这个对象，如果不存在就再检查一下是否在 window 对象中。
+
+### 读文件
+
+当获得 `File` 的引用以后，就可以用它来实例化一个 `FileReader` 对象，读取是异步的，所以需要提供回调函数。
+
+`FileReader` 的具体内容可以参见 https://developer.mozilla.org/en-US/docs/DOM/FileReader
+
+```coffeescript
+preview = $ "img#preview"
+if file.type.match(/image.*/) and file.size < 50000000
+  reader = new FileReader
+  reader.onload = (event) ->
+    data = event.target.result
+    preview.attr "src", data
+  reader.readAsDataURL file
+```
+
+#### 二进制大文件和文件分割
+
+`File` 对象有一个实例方法 `slice()` ，使用方法类似字符串的 `slice()` 函数，第一个参数是起始位置，第二个是偏移量。它返回 Blob 对象，我们可以使用支持 `File` 对象的方法对它做操作：
+
+```coffeescript
+bufferSize = 1024
+pos = 0
+onload = (event) -> console.log "Read: ", event.target.result
+onerror = (event) -> console.log "Error: ", event
+while pos < file.size
+  blob = file.slice pos, bufferSize
+  reader = new FileReader
+  reader.onload = onload
+  reader.onerror = onerror
+  reader.readAsText blob
+  pos += bufferSize
+```
+
+`FileReader` 对象只能使用一次，之后就需要生成一个新实例了。
+
+同时，由于受到 同源策略 的影响，以上代码如果不是通过域名进行的访问的话，就会操作失败并触发 error 事件。
+
+### 自定义浏览器按钮
+
+如何自定义一个文件输入框的样式？当鼠标移动到按钮上方时，在相同位置放置一个透明的文件输入框，尺寸和按钮一样。透明的文件输入框可以获取任何点击事件，并打开一个浏览文件的对话框。
+
+在书的附加文件的 assets/ch07 文件夹里，有一个 jquery.browse.js ，这个文件是基于 jQuery 来实现这种功能的。调用 jQuery 实例的 `browseElement()` 函数来创建一个自定义的浏览按钮。
+
+### 上传文件
+
+[XMLHttpRequest Level 2 规范](http://www.w3.org/TR/XMLHttpRequest2/)赋予了 Ajax 上传文件的能力
+
+* Safari >= 5.0
+* Firefox >= 4.0
+* Chrome >= 7.0
+* IE: no support
+* Opera: no support
+
+可以使用现有的 XHR API 来完成文件上传，将 `File` 对象直接传入 `send()`，或者也可以作为 `FormData` 对象的一个参数传入 `send()` 。
+
+`FormData` 实例用一种非常简单的接口表示表单的内容。可以直接通过抓取一个表单来创建 `FormData` ，或者在实例化对象时传入已经存在的 form 元素。
+
+如果在使用 jQuery 处理 Ajax 请求，则需要将 processData 选项设置为 `false` 。这样 jQuery 就不会尝试去对数据进行序列化处理了。
 
 ## 第八章 实时 Web
 
