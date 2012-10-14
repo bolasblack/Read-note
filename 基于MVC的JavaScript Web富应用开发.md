@@ -643,11 +643,105 @@ while pos < file.size
 
 `FormData` 实例用一种非常简单的接口表示表单的内容。可以直接通过抓取一个表单来创建 `FormData` ，或者在实例化对象时传入已经存在的 form 元素。
 
-如果在使用 jQuery 处理 Ajax 请求，则需要将 processData 选项设置为 `false` 。这样 jQuery 就不会尝试去对数据进行序列化处理了。
+如果在使用 jQuery 处理 Ajax 请求，则需要将 `processData` 选项设置为 `false` 。这样 jQuery 就不会尝试去对数据进行序列化处理了。
 
 ## 第八章 实时 Web
 
-略。
+> 为什么实时 Web 这么重要？我们生活在一个实时 (real-time) 的世界中，因此 Web 的最终最自然的状态也应当是实时的。
+
+### WebSocket
+
+在 WebSocket 的设计之初，设计者们希望只要初始连接使用了常用的端口和 HTTP 头字段，就可以和防火墙和代理软件和谐相处，可惜有些代理软件对 WebSocket 最初发起的请求头作了修改，打破了协议规则。当然，版本 76 的协议草案也无意中打破了对反向代理和网关的兼容性。为了更好更成功的使用 WebSocket ，这里给出一些步骤：
+
+* 使用 wss ，代理软件不会对加密的连接胡乱篡改，此外发送的数据都是加密的，也更不容易被人窃取。
+* 在 WebSocket 服务器前使用 TCP 负载均衡器，而不使用 HTTP 负载均衡器，除非某个 HTTP 负载均衡器大肆宣扬自己支持 WebSocket 。
+* 不要假设浏览器支持 WebSocket ，虽然浏览器支持 WebSocket 只是时间问题。如果连接无法快速建立，就立刻优雅降级。
+
+服务器解决方案：
+
+* Node.js
+  * node-Websocket-server (http://github.com/miksago/node-websocket-server)
+  * Socket.io (http://socket.io)
+* Ruby
+  * EventMachine (http://github.com/igrigorik/em-websocket)
+  * Cramp (https://github.com/lifo/cramp)
+  * Sunshowers (http://rainbows.rubyforge.org/sunshowers/)
+* Python
+  * Twisted (http://github.com/rlotun/txWebSocket)
+  * Apache module (http://code.google.com/p/pywebsocket)
+* PHP
+  * php-Websocket (http://github.com/nicokaiser/php-websocket)
+* Java
+  * Jetty (http://www.eclipes.org/jetty)
+* Google Go
+  * native (http://code.google.com/p/go)
+  
+#### Node.js 和 Socket.IO
+
+> 译注 4：
+
+> O'reilly 出版的一本小册子专门介绍 Node.js —— 《什么是 Node 》 (What is Node) 。已经有中译本，请参照： http://jali.github.com/whatisnode/
+
+Socket.IO 是一个 Node.js 库，实现了 WebScoket 的 Server 端和 Client 端，同时 Client 端在浏览器不支持 WebSocket 时也能优雅降级为其他连接方式以达到浏览器兼容：
+
+* WebSocket
+* Adobe Flash Socket
+* ActiveX HTMLFile(IE)
+* 基于 multipart 编码发送 XHR (XHR with multipart encoding)
+* 基于长轮询的 XHR
+* JSONP 轮询（用于跨域的场景）
+
+Socket.IO 保证了它能兼容大多数浏览器：
+
+ * Desktop
+  * Internet Explorer 5.5+
+  * Safari 3+
+  * Google Chrome 4+
+  * Firefox 3+
+  * Opera 10.61+
+ * Mobile
+  * iPhone Safari
+  * iPad Safari
+  * Android WebKit
+  * WebOs WebKit
+
+现在 Socket.IO 也有了其他语言实现的版本了，比如
+
+* Ruby (Rack) (http://github.com/markjeee/Socket.IQ-racke)
+* Python (Tornado) (http://github.com/MrJoes/tornadio)
+* Java (http://code.google.com/p/socketio-java)
+* Google Go (http://github.com/madari/go-socket.io)
+
+如果想要寻求比 Socket.IO 更高级的解决方案，可以关注一下 [Juggernaut](http://github.com/maccman/juggernaut) ，它就是基于 Socket.IO 实现的。Juggernaut 实现了 WebSocket 的订阅/发布模式。
+
+> 这个库可以针对不同的客户端和实现环境作灵活扩展，比如 TLS 等。
+
+如果你需要虚拟主机中的解决方案，可以参考 [Pusher](http://pusherappcom) 。Pusher 可以让你从繁杂的服务器管理事务中脱离出来，使你能将注意力集中在有意义的部分。
+
+### 实时架构
+
+实时架构是基于事件驱动的 (event-driven) 。事件往往是由用户交互触发的。要想为你的应用构建实时架构，则需要考虑两件事：
+
+* 哪个模型需要是实时的？
+* 当模型实例发生改变时，需要通知哪些用户？
+
+当需要通知用户时，这就引入了一个新问题：如何向特定的用户发送通知？
+
+最佳方法就是使用发布/订阅模型：服务器和客户端共同维持一个特定的信道，服务器负责推送，客户端负责订阅以及呈现。
+
+### 感知速度
+
+速度是 UI 设计最重要的也是最易忽略的问题，速度对用户体验 (UX) 的影响最大，并且直接影响网站的收益。很多大公司一直在研究，调查速度和网站收益之间的关系。
+
+* Amazon: 页面加载时间每增加 100 毫秒，就会造成 1% 的销售额流失（来源： Greg Linden, Amazon）
+* Google: 页面加载时间每增加 500 毫秒，就会造成 20% 的流量损失（来源： Marrissa Mayer, Google)
+* Yahoo!: 页面加载时间每增加 400 毫秒，在页面加载完成之前点“后端”按钮的人会增加 5% ~ 9% （来源：Nicole Sullivao, Yahoo!）
+
+> 感知速度和真实速度同样重要，因为感知速度关系到用户的相关体验。因此，关键是要让用户“感觉”到你的应用很快。
+
+> 除了交互设计的小技巧以外，Web 应用中最耗时间的部分是新数据的加载。最明智的做法是在用户请求数据之前预测用户的行为并预加载数据。
+
+> 当用户和你的应用产生交互时，你需要适时给用户一些反馈，通常使用一些可视化的进度指示来给出反馈。用行业术语来讲就是“期望管理”（expectation Managment）——要让用户知道当前项目的状态和估计完成时间。“期望管理”同样适用于用户体验领域，适时地给用户一些反馈，让之用户发生了什么事情，会让用户更有耐心等待程序的运行。
 
 ## 第九章 测试和调试
 
@@ -892,3 +986,5 @@ App =
 [9]: 译注1：滑坡理论 (slippery slope) 也称为滑坡谬误，是一种逻辑错误，即不合理的使用连串的因果关系，将“可能性”转换为“必然性”，以达到某种意欲只结论。
 
 [10]: 译注3：原文这里是 parallel universe 即平行宇宙，意思是说把由 JavaScript 创建的内容再拼成静态的 html 内容。
+
+[11]: 译注1：HTTP 是 Web 的基石，HTTP 都是短连接，客户端向服务器发送请求服务器需要做出响应，请求加响应就构成一次完整的 HTTP 连接的过程，响应完成后连接就“断掉”了，所以对于服务器来说，信息推送到客户端都是“被动”的，理论上任何信息从服务器发送到客户端都必须由客户端先发起请求，这就是文中所说的请求/响应模型。
