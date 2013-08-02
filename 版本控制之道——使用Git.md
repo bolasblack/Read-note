@@ -207,7 +207,7 @@ $ git rebase <branchName>
 除了同步历史以外， `git rebase` 还拥有修改历史的能力，具体可以参考 [6.7 重新改写历史记录](#67-重新改写历史记录)。
 
 #### 剥离分支
-命令 `git rebase` 命令还提供了一个 `--into` 参数，用于将分支3与分支2的提交记录差值变基到分支1上。
+命令 `git rebase` 命令还提供了一个 `--onto` 参数，用于将分支3与分支2的提交记录差值变基到分支1上。
 
 例如，有三条分支，主分支 master ，从 master 拉出来的 contacts 和从 contacts 拉出来的 search 分支。
 
@@ -216,7 +216,7 @@ $ git rebase <branchName>
 这时就可以输入以下命令，将 search 分支变基到 master 。
 
 ```bash
-$ git rebase --into master contacts search
+$ git rebase --onto master contacts search
 ```
 
 这个命令是将 search 分支从 contacts 分支剥离，移动到主分支上，如果要合并 search 分支上的内容到 master 上，不需要 contacts 上的任何东西，可以使用此方法。当然，search 分支要完全独立于 contacts 分支，尽量避免变基到 master 时出现合并冲突。
@@ -224,7 +224,7 @@ $ git rebase --into master contacts search
 还可以使用 [6.2 指定查找范围](#62-指定查找范围) 中提到的 *提交范围参数* ，来做一些其他有趣的事情，比如抹消倒数第二个提交。
 
 ```bash
-$ git rebase --into HEAD^^ HEAD^ HEAD
+$ git rebase --onto HEAD^^ HEAD^ HEAD
 ```
 
 ### 9.4 重现隐藏的历史
